@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,14 +21,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DocumentAdapter adapter;
     private List<Document> documentList;
+    private ImageButton favoriteButton;
+    private TextView titleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo RecyclerView
+        // Khởi tạo các view
         recyclerView = findViewById(R.id.documentsRecyclerView);
+        favoriteButton = findViewById(R.id.favoriteButton);
+        titleText = findViewById(R.id.titleText);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Tạo dữ liệu ban đầu
@@ -48,6 +55,26 @@ public class MainActivity extends AppCompatActivity {
                 showAddDocumentDialog();
             }
         });
+
+        // Xử lý sự kiện nút sao
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                togglePinnedDocuments();
+            }
+        });
+    }
+
+    private void togglePinnedDocuments() {
+        if (adapter.isShowingPinned()) {
+            // Nếu đang hiển thị tài liệu ghim, chuyển về hiển thị tất cả
+            adapter.showAllDocuments();
+            titleText.setText("Quản lý Tài liệu");
+        } else {
+            // Nếu đang hiển thị tất cả, chuyển sang hiển thị tài liệu ghim
+            adapter.showPinnedDocuments();
+            titleText.setText("Tài liệu đã ghim");
+        }
     }
 
     private void showAddDocumentDialog() {
