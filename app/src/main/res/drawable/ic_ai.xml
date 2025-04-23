@@ -1,0 +1,61 @@
+<!-- ic_ai_text.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Gradient background -->
+    <path
+        android:fillColor="#4285F4"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10s10,-4.48 10,-10S17.52,2 12,2z" />
+
+    <!-- Digital circuit pattern overlay -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.3"
+        android:strokeAlpha="0.3"
+        android:pathData="M4,12 h4 M16,12 h4 M12,4 v4 M12,16 v4" />
+
+    <!-- Accent dots -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M7,7 m-0.4,0 a0.4,0.4 0,1 0,0.8 0 a0.4,0.4 0,1 0,-0.8 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M17,7 m-0.4,0 a0.4,0.4 0,1 0,0.8 0 a0.4,0.4 0,1 0,-0.8 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M7,17 m-0.4,0 a0.4,0.4 0,1 0,0.8 0 a0.4,0.4 0,1 0,-0.8 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M17,17 m-0.4,0 a0.4,0.4 0,1 0,0.8 0 a0.4,0.4 0,1 0,-0.8 0" />
+
+    <!-- Central node -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.15"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.3"
+        android:pathData="M12,12 m-1.5,0 a1.5,1.5 0,1 0,3 0 a1.5,1.5 0,1 0,-3 0" />
+
+    <!-- A letter with improved design -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8.5,16l1.5,-8h1l1.5,8h-1.4l-0.3,-1.7h-1.6L8.9,16H8.5zM10.3,13.3h1.2l-0.6,-3.5L10.3,13.3z" />
+
+    <!-- I letter with improved design -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,8v8h-1.4V8H15z" />
+
+    <!-- Subtle glow effect -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.1"
+        android:pathData="M12,10 a2,2 0 1 0 0.01,0z" />
+</vector>

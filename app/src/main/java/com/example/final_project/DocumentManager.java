@@ -15,11 +15,25 @@ public class DocumentManager {
     }
 
     private void initializeDocuments() {
-        // Tạo dữ liệu ban đầu
-        allDocuments.add(new Document("PDF", "Báo cáo tài chính Q2"));
-        allDocuments.add(new Document("DOC", "Đề xuất chính sách mới"));
-        allDocuments.add(new Document("TXT", "Kết luận cuộc họp"));
-        allDocuments.add(new Document("XLS", "Dự toán ngân sách"));
+        // Tạo dữ liệu ban đầu với thời gian hiện tại
+        long currentTime = System.currentTimeMillis();
+
+        // Tạo các document với thời gian tạo là hiện tại
+        Document doc1 = new Document("PDF", "Báo cáo tài chính Q2");
+        Document doc2 = new Document("DOC", "Đề xuất chính sách mới");
+        Document doc3 = new Document("TXT", "Kết luận cuộc họp");
+        Document doc4 = new Document("XLS", "Dự toán ngân sách");
+
+        // Đảm bảo thời gian tạo được thiết lập
+        doc1.setCreatedAt(currentTime);
+        doc2.setCreatedAt(currentTime);
+        doc3.setCreatedAt(currentTime);
+        doc4.setCreatedAt(currentTime);
+
+        allDocuments.add(doc1);
+        allDocuments.add(doc2);
+        allDocuments.add(doc3);
+        allDocuments.add(doc4);
     }
 
     public List<Document> getInitialDocuments() {
@@ -47,6 +61,10 @@ public class DocumentManager {
     }
 
     public void addDocument(Document document) {
+        // Đảm bảo thời gian tạo được thiết lập nếu chưa có
+        if (document.getCreatedAt() == 0) {
+            document.setCreatedAt(System.currentTimeMillis());
+        }
         allDocuments.add(document);
     }
 
@@ -57,7 +75,31 @@ public class DocumentManager {
     public void updateDocument(Document oldDoc, Document newDoc) {
         int index = allDocuments.indexOf(oldDoc);
         if (index != -1) {
+            // Giữ lại thời gian tạo từ tài liệu cũ
+            newDoc.setCreatedAt(oldDoc.getCreatedAt());
+
+            // Cập nhật thời gian chỉnh sửa
+            newDoc.setUpdatedAt(System.currentTimeMillis());
+
             allDocuments.set(index, newDoc);
         }
+    }
+
+    // Phương thức mới để cập nhật tiêu đề
+    public void updateDocumentTitle(Document document, String newTitle) {
+        document.setTitle(newTitle);
+        document.setUpdatedAt(System.currentTimeMillis());
+    }
+
+    // Phương thức mới để cập nhật đường dẫn
+    public void updateDocumentPath(Document document, String newPath) {
+        document.setPath(newPath);
+        document.setUpdatedAt(System.currentTimeMillis());
+    }
+
+    // Phương thức mới để toggle trạng thái ghim và cập nhật thời gian
+    public void toggleDocumentPin(Document document) {
+        document.togglePinned();
+        document.setUpdatedAt(System.currentTimeMillis());
     }
 }

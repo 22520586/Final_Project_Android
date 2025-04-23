@@ -1,6 +1,7 @@
 package com.example.final_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,7 +56,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
         holder.itemView.setOnClickListener(v -> {
             // Xử lý sự kiện khi nhấn vào item
-            Toast.makeText(context, "Đã chọn: " + document.getTitle(), Toast.LENGTH_SHORT).show();
+            openDocumentDetail(document);
         });
     }
 
@@ -75,7 +76,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.action_open) {
-                Toast.makeText(context, "Mở: " + document.getTitle(), Toast.LENGTH_SHORT).show();
+                openDocumentDetail(document);
                 return true;
             } else if (id == R.id.action_edit) {
                 Toast.makeText(context, "Chỉnh sửa: " + document.getTitle(), Toast.LENGTH_SHORT).show();
@@ -93,6 +94,15 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             return false;
         });
         popup.show();
+    }
+
+    /**
+     * Open document detail view
+     */
+    private void openDocumentDetail(Document document) {
+        Intent intent = DocumentDetailActivity.newIntent(
+                context, document.getTitle(), document.getType());
+        context.startActivity(intent);
     }
 
     private void togglePinStatus(int position) {
