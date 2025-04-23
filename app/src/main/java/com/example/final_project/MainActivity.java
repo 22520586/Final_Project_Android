@@ -1,5 +1,6 @@
 package com.example.final_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -26,12 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private TextView titleText;
     private ImageButton menuButton;
     private EditText searchEditText;
-    private ImageView userIconView; // Add a reference to user icon
+    private ImageView userIconView;
+    private BottomNavigationView bottomNavigationView;
 
     private DocumentManager documentManager;
     private AddDocumentDialogHelper dialogHelper;
     private DropdownMenuHelper dropdownMenuHelper;
-    private UserProfileDialogHelper userProfileDialogHelper; // Add user profile dialog helper
+    private UserProfileDialogHelper userProfileDialogHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +48,16 @@ public class MainActivity extends AppCompatActivity {
         documentManager = new DocumentManager(this);
         dialogHelper = new AddDocumentDialogHelper(this);
         dropdownMenuHelper = new DropdownMenuHelper(this);
-        userProfileDialogHelper = new UserProfileDialogHelper(this); // Initialize user profile helper
+        userProfileDialogHelper = new UserProfileDialogHelper(this);
 
         // Thiết lập RecyclerView
         setupRecyclerView();
 
         // Xử lý sự kiện các nút
         setupButtonListeners();
+
+        // Thiết lập BottomNavigationView
+        setupBottomNavigation();
     }
 
     private void initializeViews() {
@@ -60,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         titleText = findViewById(R.id.titleText);
         menuButton = findViewById(R.id.menuButton);
         searchEditText = findViewById(R.id.searchEditText);
-        userIconView = findViewById(R.id.profileButton); // Initialize user icon view
+        userIconView = findViewById(R.id.profileButton);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
     }
 
     private void setupRecyclerView() {
@@ -107,6 +114,29 @@ public class MainActivity extends AppCompatActivity {
                 userProfileDialogHelper.showUserProfileDialog();
             }
         });
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                // Đã ở MainActivity (Trang chủ), không cần làm gì
+                return true;
+            } else if (item.getItemId() == R.id.nav_folder) {
+                // Chuyển sang FolderActivity
+                startActivity(new Intent(MainActivity.this, FolderActivity.class));
+                finish();
+                return true;
+            } else if (item.getItemId() == R.id.nav_settings) {
+                // Chuyển sang SettingActivity
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                finish();
+                return true;
+            }
+            return false;
+        });
+
+        // Mặc định chọn tab Trang chủ
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     private void togglePinnedDocuments() {

@@ -25,6 +25,11 @@
             android:name=".DocumentDetailActivity"
             android:label="Document Detail"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".SettingActivity"
+            android:launchMode="singleTop" />
+
+        <activity android:name=".FolderActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

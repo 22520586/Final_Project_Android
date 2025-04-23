@@ -1,5 +1,6 @@
 package com.example.final_project;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -146,7 +147,9 @@ public class DropdownMenuHelper {
         settingsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle settings button click
+                // Chuyển sang SettingActivity
+                v.getContext().startActivity(new Intent(v.getContext(), SettingActivity.class));
+                // Đóng PopupWindow
                 popupWindow.dismiss();
             }
         });
