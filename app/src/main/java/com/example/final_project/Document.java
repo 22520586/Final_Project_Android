@@ -4,21 +4,36 @@ public class Document {
     private String type;
     private String title;
     private boolean isPinned;
-    private String date;
+    private String path;
 
     public Document(String type, String title) {
         this.type = type;
         this.title = title;
         this.isPinned = false;
-        this.date = "20/04/2025"; // Mặc định hoặc tính toán dựa trên ngày hiện tại
+        this.path = "";
+    }
+
+    public Document(String type, String title, String path, boolean isPinned) {
+        this.type = type;
+        this.title = title;
+        this.isPinned = isPinned;
+        this.path = path;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public boolean isPinned() {
@@ -29,11 +44,15 @@ public class Document {
         isPinned = pinned;
     }
 
-    public String getDate() {
-        return date;
+    public String getPath() {
+        return path;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void togglePinned() {
+        isPinned = !isPinned;
     }
 }

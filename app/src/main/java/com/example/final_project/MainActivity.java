@@ -1,18 +1,18 @@
 package com.example.final_project;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
     private List<Document> documentList;
     private ImageButton favoriteButton;
     private TextView titleText;
+    private ImageButton menuButton;
+    private EditText searchEditText;
+
+    private DocumentManager documentManager;
+    private AddDocumentDialogHelper dialogHelper;
+    private DropdownMenuHelper dropdownMenuHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,29 +36,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Khởi tạo các view
+        initializeViews();
+
+        // Khởi tạo các helper
+        documentManager = new DocumentManager(this);
+        dialogHelper = new AddDocumentDialogHelper(this);
+        dropdownMenuHelper = new DropdownMenuHelper(this);
+
+        // Thiết lập RecyclerView
+        setupRecyclerView();
+
+        // Xử lý sự kiện các nút
+        setupButtonListeners();
+    }
+
+    private void initializeViews() {
         recyclerView = findViewById(R.id.documentsRecyclerView);
         favoriteButton = findViewById(R.id.favoriteButton);
         titleText = findViewById(R.id.titleText);
+        menuButton = findViewById(R.id.menuButton);
+        searchEditText = findViewById(R.id.searchEditText);
+    }
 
+    private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Tạo dữ liệu ban đầu
-        documentList = new ArrayList<>();
-        documentList.add(new Document("PDF", "Báo cáo tài chính Q2"));
-        documentList.add(new Document("DOC", "Đề xuất chính sách mới"));
-        documentList.add(new Document("TXT", "Kết luận cuộc họp"));
-        documentList.add(new Document("XLS", "Dự toán ngân sách"));
+        // Lấy dữ liệu tài liệu từ DocumentManager
+        documentList = documentManager.getInitialDocuments();
 
         // Thiết lập adapter
         adapter = new DocumentAdapter(this, documentList);
         recyclerView.setAdapter(adapter);
+    }
 
+    private void setupButtonListeners() {
         // Xử lý sự kiện nút thêm
         FloatingActionButton addButton = findViewById(R.id.addDocumentFab);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddDocumentDialog();
+                dialogHelper.showAddDocumentDialog();
             }
         });
 
@@ -61,6 +84,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 togglePinnedDocuments();
+            }
+        });
+
+        // Xử lý sự kiện nút menu
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dropdownMenuHelper.showDropdownMenu();
             }
         });
     }
@@ -77,58 +108,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showAddDocumentDialog() {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_document);
-        dialog.setCancelable(true);
+    // Getter để các helper có thể truy cập
+    public DocumentAdapter getAdapter() {
+        return adapter;
+    }
 
-        // Get dialog elements
-        LinearLayout uploadDocLayout = dialog.findViewById(R.id.uploadDocumentLayout);
-        LinearLayout importCloudLayout = dialog.findViewById(R.id.importCloudLayout);
-        Button cancelButton = dialog.findViewById(R.id.cancelButton);
-        Button continueButton = dialog.findViewById(R.id.continueButton);
+    public TextView getTitleText() {
+        return titleText;
+    }
 
-        // Set click listeners
-        uploadDocLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Tải lên từ thiết bị", Toast.LENGTH_SHORT).show();
-                // Thực hiện chức năng tải lên tài liệu
-                // TODO: Implement file picker
-            }
-        });
-
-        importCloudLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Nhập từ đám mây", Toast.LENGTH_SHORT).show();
-                // Thực hiện chức năng nhập từ đám mây
-                // TODO: Implement cloud storage integration
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Tiếp tục", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-                // TODO: Implement next step based on selection
-            }
-        });
-
-        dialog.show();
-        // Make dialog width match parent
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        }
+    // Phương thức để hiển thị thông báo từ các helper
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

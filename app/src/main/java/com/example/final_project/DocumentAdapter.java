@@ -40,7 +40,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         Document document = documentList.get(position);
         holder.typeText.setText(document.getType());
         holder.titleText.setText(document.getTitle());
-        holder.dateText.setText(document.getDate());
+//        holder.dateText.setText(document.getDate());
 
         // Hiển thị/ẩn icon ghim dựa trên trạng thái của tài liệu
         if (document.isPinned()) {
