@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +26,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView titleText;
     private ImageButton menuButton;
     private EditText searchEditText;
+    private ImageView userIconView; // Add a reference to user icon
 
     private DocumentManager documentManager;
     private AddDocumentDialogHelper dialogHelper;
     private DropdownMenuHelper dropdownMenuHelper;
+    private UserProfileDialogHelper userProfileDialogHelper; // Add user profile dialog helper
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         documentManager = new DocumentManager(this);
         dialogHelper = new AddDocumentDialogHelper(this);
         dropdownMenuHelper = new DropdownMenuHelper(this);
+        userProfileDialogHelper = new UserProfileDialogHelper(this); // Initialize user profile helper
 
         // Thiết lập RecyclerView
         setupRecyclerView();
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         titleText = findViewById(R.id.titleText);
         menuButton = findViewById(R.id.menuButton);
         searchEditText = findViewById(R.id.searchEditText);
+        userIconView = findViewById(R.id.profileButton); // Initialize user icon view
     }
 
     private void setupRecyclerView() {
@@ -92,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dropdownMenuHelper.showDropdownMenu();
+            }
+        });
+
+        // Xử lý sự kiện nút user icon
+        userIconView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userProfileDialogHelper.showUserProfileDialog();
             }
         });
     }
