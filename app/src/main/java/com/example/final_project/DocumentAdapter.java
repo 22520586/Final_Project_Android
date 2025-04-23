@@ -2,6 +2,9 @@ package com.example.final_project;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,10 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
 
@@ -41,9 +50,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         Document document = documentList.get(position);
         holder.typeText.setText(document.getType());
         holder.titleText.setText(document.getTitle());
-//        holder.dateText.setText(document.getDate());
 
-        // Hiển thị/ẩn icon ghim dựa trên trạng thái của tài liệu
         if (document.isPinned()) {
             holder.pinnedIcon.setVisibility(View.VISIBLE);
         } else {
@@ -55,7 +62,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         });
 
         holder.itemView.setOnClickListener(v -> {
-            // Xử lý sự kiện khi nhấn vào item
             openDocumentDetail(document);
         });
     }
@@ -65,13 +71,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         PopupMenu popup = new PopupMenu(context, view);
         popup.inflate(R.menu.file_options_menu);
 
-        // Đổi text của menu item "Ghim" thành "Bỏ ghim" nếu tài liệu đã được ghim
         MenuItem pinItem = popup.getMenu().findItem(R.id.action_pin);
-        if (document.isPinned()) {
-            pinItem.setTitle("Bỏ ghim");
-        } else {
-            pinItem.setTitle("Ghim");
-        }
+        pinItem.setTitle(document.isPinned() ? "Bỏ ghim" : "Ghim");
 
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
@@ -79,26 +80,85 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 openDocumentDetail(document);
                 return true;
             } else if (id == R.id.action_edit) {
-                Toast.makeText(context, "Chỉnh sửa: " + document.getTitle(), Toast.LENGTH_SHORT).show();
+                EditDocumentBottomSheet bottomSheet = EditDocumentBottomSheet.newInstance(
+                        document.getTitle(),
+                        document.getDescription() // bạn có thể sửa nếu không có mô tả
+                );
+                bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
                 return true;
-            } else if (id == R.id.action_share) {
-                Toast.makeText(context, "Chia sẻ: " + document.getTitle(), Toast.LENGTH_SHORT).show();
-                return true;
+
+        } else if (id == R.id.action_share) {
+                ShareBottomSheet bottomSheet = ShareBottomSheet.newInstance(document.getTitle(), document.getType());
+                bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
+
+
             } else if (id == R.id.action_pin) {
                 togglePinStatus(position);
                 return true;
             } else if (id == R.id.action_delete) {
-                deleteDocument(position);
+                showDeleteConfirmation(position);
                 return true;
             }
             return false;
         });
+
         popup.show();
     }
 
-    /**
-     * Open document detail view
-     */
+    private void shareDocument(Document document) {
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.setType("text/plain");
+
+        String shareContent = "Tiêu đề: " + document.getTitle() + "\nLoại: " + document.getType();
+        sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Chia sẻ tài liệu");
+
+        // Tạo danh sách app chia sẻ (loại trừ Bluetooth)
+        Intent chooser = Intent.createChooser(sendIntent, "Chia sẻ tài liệu");
+
+        // Optional: chặn app Bluetooth nếu muốn lọc
+        List<Intent> targetIntents = new ArrayList<>();
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(sendIntent, 0);
+        for (ResolveInfo resInfo : resInfoList) {
+            String packageName = resInfo.activityInfo.packageName;
+            if (!packageName.toLowerCase().contains("bluetooth")) {
+                Intent targetedIntent = new Intent(Intent.ACTION_SEND);
+                targetedIntent.setType("text/plain");
+                targetedIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+                targetedIntent.setPackage(packageName);
+                targetIntents.add(targetedIntent);
+            }
+        }
+
+        if (!targetIntents.isEmpty()) {
+            Intent finalChooser = Intent.createChooser(targetIntents.remove(0), "Chia sẻ tài liệu");
+            finalChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[0]));
+            context.startActivity(finalChooser);
+        } else {
+            Toast.makeText(context, "Không tìm thấy ứng dụng chia sẻ phù hợp.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void showDeleteConfirmation(int position) {
+        Document document = documentList.get(position);
+
+        new AlertDialog.Builder(context)
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc chắn muốn xóa tài liệu '" + document.getTitle() + "' không?")
+                .setPositiveButton("Xóa", (dialog, which) -> {
+                    deleteDocument(position);
+                })
+                .setNegativeButton("Hủy", (dialog, which) -> {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Đã hủy thao tác")
+                            .setMessage("Bạn đã hủy thao tác xóa.")
+                            .setPositiveButton("OK", null)
+                            .show();
+                })
+                .show();
+    }
+
     private void openDocumentDetail(Document document) {
         Intent intent = DocumentDetailActivity.newIntent(
                 context, document.getTitle(), document.getType());
@@ -107,10 +167,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void togglePinStatus(int position) {
         Document document = documentList.get(position);
-        // Đảo trạng thái ghim
         document.setPinned(!document.isPinned());
 
-        // Cập nhật trạng thái trong danh sách đầy đủ
         for (Document doc : allDocuments) {
             if (doc.getTitle().equals(document.getTitle()) &&
                     doc.getType().equals(document.getType())) {
@@ -119,22 +177,18 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             }
         }
 
-        // Thông báo khi ghim/bỏ ghim
-        if (document.isPinned()) {
-            Toast.makeText(context, "Đã ghim: " + document.getTitle(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Đã bỏ ghim: " + document.getTitle(), Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(context,
+                document.isPinned() ? "Đã ghim: " + document.getTitle()
+                        : "Đã bỏ ghim: " + document.getTitle(),
+                Toast.LENGTH_SHORT).show();
 
         notifyItemChanged(position);
     }
 
     private void deleteDocument(int position) {
         Document document = documentList.get(position);
-        // Xóa khỏi danh sách hiện tại
         documentList.remove(position);
 
-        // Xóa khỏi danh sách đầy đủ
         for (int i = 0; i < allDocuments.size(); i++) {
             Document doc = allDocuments.get(i);
             if (doc.getTitle().equals(document.getTitle()) &&
@@ -148,7 +202,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         notifyDataSetChanged();
     }
 
-    // Phương thức để hiển thị tất cả tài liệu
     public void showAllDocuments() {
         showingPinned = false;
         documentList.clear();
@@ -156,7 +209,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         notifyDataSetChanged();
     }
 
-    // Phương thức để hiển thị chỉ những tài liệu đã ghim
     public void showPinnedDocuments() {
         showingPinned = true;
         List<Document> pinnedDocs = new ArrayList<>();
@@ -170,7 +222,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         notifyDataSetChanged();
     }
 
-    // Phương thức để kiểm tra đang hiển thị loại tài liệu nào
     public boolean isShowingPinned() {
         return showingPinned;
     }
@@ -183,7 +234,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
     public static class DocumentViewHolder extends RecyclerView.ViewHolder {
         TextView typeText, titleText, dateText;
         ImageButton moreButton;
-        ImageView pinnedIcon;  // Thêm ImageView cho icon ghim
+        ImageView pinnedIcon;
 
         public DocumentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -191,7 +242,56 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             titleText = itemView.findViewById(R.id.documentTitleText);
             dateText = itemView.findViewById(R.id.documentDateText);
             moreButton = itemView.findViewById(R.id.moreButton);
-            pinnedIcon = itemView.findViewById(R.id.pinnedIcon);  // Ánh xạ ImageView từ layout
+            pinnedIcon = itemView.findViewById(R.id.pinnedIcon);
+        }
+    }
+
+    public static class ShareBottomSheet extends BottomSheetDialogFragment {
+
+        private String title;
+        private String type;
+
+        public static ShareBottomSheet newInstance(String title, String type) {
+            ShareBottomSheet fragment = new ShareBottomSheet();
+            Bundle args = new Bundle();
+            args.putString("title", title);
+            args.putString("type", type);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(
+                @NonNull LayoutInflater inflater,
+                @Nullable ViewGroup container,
+                @Nullable Bundle savedInstanceState) {
+
+            View view = inflater.inflate(R.layout.bottom_sheet_share, container, false);
+
+            if (getArguments() != null) {
+                title = getArguments().getString("title");
+                type = getArguments().getString("type");
+            }
+
+            TextView shareTitle = view.findViewById(R.id.shareTitle);
+            TextView shareSubtitle = view.findViewById(R.id.shareSubtitle);
+
+            shareTitle.setText("Chia sẻ tài liệu");
+            shareSubtitle.setText(title + " (" + type + ")");
+
+            view.findViewById(R.id.btnEmail).setOnClickListener(v -> shareVia("email"));
+            view.findViewById(R.id.btnSms).setOnClickListener(v -> shareVia("sms"));
+            view.findViewById(R.id.btnDrive).setOnClickListener(v -> shareVia("drive"));
+            view.findViewById(R.id.btnLink).setOnClickListener(v -> shareVia("link"));
+            view.findViewById(R.id.btnMore).setOnClickListener(v -> shareVia("more"));
+
+            return view;
+        }
+
+        private void shareVia(String method) {
+            Toast.makeText(getContext(), "Chia sẻ qua: " + method, Toast.LENGTH_SHORT).show();
+            dismiss();
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.example.final_project;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,12 +65,11 @@ public class DocumentDetailActivity extends AppCompatActivity {
             }
         });
 
-        // AI button shows a toast message
+        // AI button shows a dialog with AI feature options
         aiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DocumentDetailActivity.this,
-                        "Trợ lý AI đang được khởi động...", Toast.LENGTH_SHORT).show();
+                showAIFeaturesDialog();
             }
         });
 
@@ -92,6 +94,78 @@ public class DocumentDetailActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    // Method to show the AI features dialog - moved outside of the onClick method
+    private void showAIFeaturesDialog() {
+        // Create dialog
+        final Dialog aiDialog = new Dialog(DocumentDetailActivity.this);
+        aiDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        aiDialog.setContentView(R.layout.dialog_ai_features);
+
+        // Make dialog width match parent
+        Window window = aiDialog.getWindow();
+        if (window != null) {
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+
+        // Get views
+        ImageButton closeButton = aiDialog.findViewById(R.id.btn_close_dialog);
+        View summarizeLayout = aiDialog.findViewById(R.id.layout_summarize);
+        View searchLayout = aiDialog.findViewById(R.id.layout_search);
+        View textToSpeechLayout = aiDialog.findViewById(R.id.layout_text_to_speech);
+        View questionsLayout = aiDialog.findViewById(R.id.layout_questions);
+
+        // Set close button click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                aiDialog.dismiss();
+            }
+        });
+
+        // Set click listeners for feature items
+        summarizeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DocumentDetailActivity.this,
+                        "Đang tóm tắt tài liệu...", Toast.LENGTH_SHORT).show();
+                aiDialog.dismiss();
+                // Add logic to handle document summarization
+            }
+        });
+
+        searchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DocumentDetailActivity.this,
+                        "Đang mở tính năng tìm kiếm...", Toast.LENGTH_SHORT).show();
+                aiDialog.dismiss();
+                // Add logic to handle content search
+            }
+        });
+
+        textToSpeechLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DocumentDetailActivity.this,
+                        "Tính năng này không khả dụng", Toast.LENGTH_SHORT).show();
+                // Do not dismiss dialog as feature is unavailable
+            }
+        });
+
+        questionsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(DocumentDetailActivity.this,
+                        "Đang mở trợ lý AI...", Toast.LENGTH_SHORT).show();
+                aiDialog.dismiss();
+                // Add logic to handle AI questioning
+            }
+        });
+
+        aiDialog.show();
     }
 
     /**

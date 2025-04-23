@@ -99,4 +99,8 @@ public class Document {
     public long getDisplayDate() {
         return updatedAt > 0 ? updatedAt : createdAt;
     }
+
+    public String getDescription() {
+        return null;
+    }
 }

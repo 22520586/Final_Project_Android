@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Header -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#2196F3"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Chỉnh sửa tài liệu"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- Nội dung -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Tiêu đề -->
+        <TextView android:text="Tiêu đề"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/editTitle"
+            android:hint="Nhập tiêu đề..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Tag -->
+        <TextView android:text="Tag"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <HorizontalScrollView
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/tagContainer"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </HorizontalScrollView>
+        <ImageButton
+            android:id="@+id/btnAddTag"
+            android:src="@android:drawable/ic_input_add"
+            android:contentDescription="Thêm tag"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Mô tả -->
+        <TextView android:text="Mô tả"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/editDescription"
+            android:hint="Thêm mô tả cho tài liệu này..."
+            android:minLines="1"
+            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnCancel"
+                android:text="Hủy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btnSave"
+                android:text="Lưu thay đổi"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

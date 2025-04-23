@@ -5,4 +5,12 @@
         <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
         <item name="android:windowExitAnimation">@anim/slide_out_left</item>
     </style>
+    <style name="ShareItemStyle">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
 </resources>
