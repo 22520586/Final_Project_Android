@@ -1,4 +1,4 @@
-package com.example.final_project;
+package com.example.final_project.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.final_project.MainActivity;
+import com.example.final_project.R;
+import com.example.final_project.adapters.FolderAdapter;
+import com.example.final_project.helpers.AddFolderDialogHelper;
+import com.example.final_project.models.Folder;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

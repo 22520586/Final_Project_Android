@@ -1,4 +1,6 @@
-package com.example.final_project;
+package com.example.final_project.managers;
+
+import com.example.final_project.MainActivity;
 
 public class FileTypeManager {
     private MainActivity activity;

@@ -1,11 +1,14 @@
-package com.example.final_project;
+package com.example.final_project.helpers;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.final_project.activity.FolderActivity;
+import com.example.final_project.R;
+import com.example.final_project.models.Folder;
 
 public class AddFolderDialogHelper {
 

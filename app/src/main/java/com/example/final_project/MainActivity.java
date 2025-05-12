@@ -2,6 +2,7 @@ package com.example.final_project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -13,11 +14,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.final_project.activity.FolderActivity;
+import com.example.final_project.activity.SettingActivity;
+import com.example.final_project.adapters.DocumentAdapter;
+import com.example.final_project.helpers.AddDocumentDialogHelper;
+import com.example.final_project.helpers.DropdownMenuHelper;
+import com.example.final_project.helpers.UserProfileDialogHelper;
+import com.example.final_project.managers.DocumentManager;
+import com.example.final_project.models.Document;
+import com.example.final_project.networks.DocumentApiServices;
+import com.example.final_project.networks.RetrofitClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         // Thiết lập RecyclerView
         setupRecyclerView();
 
+        fetchDocuments();
+
         // Xử lý sự kiện các nút
         setupButtonListeners();
 
@@ -70,15 +86,41 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigation);
     }
 
+
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Lấy dữ liệu tài liệu từ DocumentManager
-        documentList = documentManager.getInitialDocuments();
+        documentList = new ArrayList<>();
 
         // Thiết lập adapter
         adapter = new DocumentAdapter(this, documentList);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void fetchDocuments()
+    {
+        DocumentApiServices apiServices = RetrofitClient.getDocumentApiService();
+        Call<List<Document>> call = apiServices.getAllDocuments();
+        call.enqueue(new Callback<List<Document>>() {
+            @Override
+            public void onResponse(Call<List<Document>> call, Response<List<Document>> response) {
+                if(response.isSuccessful() && response.body() != null)
+                {
+                    documentList.clear();
+                    documentList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    showToast("Lỗi khi tải tài liệu: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Document>> call, Throwable t) {
+                showToast("Lỗi kết nối: " + t.getMessage());
+                Log.e("MainActivity", "Lỗi kết nối: " + t.getMessage(), t);
+            }
+        });
     }
 
     private void setupButtonListeners() {

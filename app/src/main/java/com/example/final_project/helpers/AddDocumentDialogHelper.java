@@ -1,10 +1,13 @@
-package com.example.final_project;
+package com.example.final_project.helpers;
 
 import android.app.Dialog;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.example.final_project.MainActivity;
+import com.example.final_project.R;
 
 public class AddDocumentDialogHelper {
     private MainActivity activity;

@@ -1,4 +1,4 @@
-package com.example.final_project;
+package com.example.final_project.helpers;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -11,7 +11,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.final_project.MainActivity;
+import com.example.final_project.R;
 
 public class UserProfileDialogHelper {
 

@@ -1,4 +1,4 @@
-package com.example.final_project;
+package com.example.final_project.helpers;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +11,11 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
+
+import com.example.final_project.MainActivity;
+import com.example.final_project.R;
+import com.example.final_project.activity.SettingActivity;
+import com.example.final_project.managers.FileTypeManager;
 
 public class DropdownMenuHelper {
     private MainActivity activity;

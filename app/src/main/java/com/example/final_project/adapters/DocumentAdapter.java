@@ -1,4 +1,4 @@
-package com.example.final_project;
+package com.example.final_project.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.final_project.activity.DocumentDetailActivity;
+import com.example.final_project.bottom_sheet.EditDocumentBottomSheet;
+import com.example.final_project.R;
+import com.example.final_project.models.Document;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 
