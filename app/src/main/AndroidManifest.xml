@@ -35,6 +35,7 @@
 
         <activity android:name=".activity.FolderActivity"
             android:launchMode="singleTop" />
+        <activity android:name=".activity.FolderDetailActivity" />
     </application>
 
 </manifest>

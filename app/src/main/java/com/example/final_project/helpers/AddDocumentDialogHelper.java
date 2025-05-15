@@ -1,18 +1,20 @@
 package com.example.final_project.helpers;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.final_project.MainActivity;
 import com.example.final_project.R;
 
 public class AddDocumentDialogHelper {
-    private MainActivity activity;
+    private Activity activity;
 
-    public AddDocumentDialogHelper(MainActivity activity) {
+    public AddDocumentDialogHelper(Activity activity) {
         this.activity = activity;
     }
 
@@ -32,7 +34,8 @@ public class AddDocumentDialogHelper {
         uploadDocLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.showToast("Tải lên từ thiết bị");
+                Toast.makeText(activity, "Tải lên từ thiết bị", Toast.LENGTH_SHORT).show();
+
                 // Thực hiện chức năng tải lên tài liệu
                 // TODO: Implement file picker
             }
@@ -41,7 +44,8 @@ public class AddDocumentDialogHelper {
         importCloudLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.showToast("Nhập từ đám mây");
+                Toast.makeText(activity, "Nhập từ đám mây", Toast.LENGTH_SHORT).show();
+
                 // Thực hiện chức năng nhập từ đám mây
                 // TODO: Implement cloud storage integration
             }
@@ -57,7 +61,8 @@ public class AddDocumentDialogHelper {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.showToast("Tiếp tục");
+                Toast.makeText(activity, "Tiếp tục", Toast.LENGTH_SHORT).show();
+
                 dialog.dismiss();
                 // TODO: Implement next step based on selection
             }

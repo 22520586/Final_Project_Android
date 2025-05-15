@@ -18,10 +18,17 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
 
     private Context context;
     private List<Folder> folderList;
+    private OnFolderClickListener listener;
 
-    public FolderAdapter(Context context, List<Folder> folderList) {
+    // Giao diện callback cho sự kiện nhấp
+    public interface OnFolderClickListener {
+        void onFolderClick(Folder folder);
+    }
+
+    public FolderAdapter(Context context, List<Folder> folderList, OnFolderClickListener listener) {
         this.context = context;
         this.folderList = folderList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -35,6 +42,8 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.FolderView
     public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
         Folder folder = folderList.get(position);
         holder.folderName.setText(folder.getName());
+        // Xử lý sự kiện nhấp vào item
+        holder.itemView.setOnClickListener(v -> listener.onFolderClick(folder));
     }
 
     @Override

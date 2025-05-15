@@ -66,8 +66,12 @@ public class FolderActivity extends AppCompatActivity {
         folderList.add(new Folder("Cá nhân"));
         folderList.add(new Folder("Học tập"));
 
-        // Thiết lập adapter
-        adapter = new FolderAdapter(this, folderList);
+        // Thiết lập adapter với OnFolderClickListener
+        adapter = new FolderAdapter(this, folderList, folder -> {
+            Intent intent = new Intent(FolderActivity.this, FolderDetailActivity.class);
+            intent.putExtra("FOLDER_NAME", folder.getName());
+            startActivity(intent);
+        });
         recyclerView.setAdapter(adapter);
     }
 
