@@ -7,10 +7,10 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface UserApiService {
-    @POST("/auth/login")
+    @POST("auth/login")
     Call<User> login(@Body User user);
 
-    @POST("/auth/sign-up")
+    @POST("auth/sign-up")
     Call<User> register(@Body User user);
 
 }
