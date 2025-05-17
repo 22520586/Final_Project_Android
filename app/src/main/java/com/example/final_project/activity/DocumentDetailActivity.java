@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -12,11 +11,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.final_project.R;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DocumentDetailActivity extends AppCompatActivity {
@@ -27,7 +24,6 @@ public class DocumentDetailActivity extends AppCompatActivity {
     private TextView documentTitleText;
     private ImageButton backButton;
     private FloatingActionButton aiButton;
-    private BottomNavigationView bottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +50,6 @@ public class DocumentDetailActivity extends AppCompatActivity {
         documentTitleText = findViewById(R.id.documentTitleText);
         backButton = findViewById(R.id.backButton);
         aiButton = findViewById(R.id.aiButton);
-        bottomNavigation = findViewById(R.id.bottomNavigation);
     }
 
     private void setupButtonListeners() {
@@ -73,31 +68,9 @@ public class DocumentDetailActivity extends AppCompatActivity {
                 showAIFeaturesDialog();
             }
         });
-
-        // Bottom navigation setup
-        bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-
-                if (id == R.id.nav_home) {
-                    finish(); // Return to main screen
-                    return true;
-                } else if (id == R.id.nav_folder) {
-                    Toast.makeText(DocumentDetailActivity.this,
-                            "Mở thư mục", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (id == R.id.nav_settings) {
-                    Toast.makeText(DocumentDetailActivity.this,
-                            "Mở cài đặt", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
-    // Method to show the AI features dialog - moved outside of the onClick method
+    // Method to show the AI features dialog
     private void showAIFeaturesDialog() {
         // Create dialog
         final Dialog aiDialog = new Dialog(DocumentDetailActivity.this);
