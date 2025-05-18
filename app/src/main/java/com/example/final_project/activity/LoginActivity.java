@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                User user = new User(null,null, email, password);
+                User user = new User(null,null, email, password, null);
                 login(user);
             }
         });

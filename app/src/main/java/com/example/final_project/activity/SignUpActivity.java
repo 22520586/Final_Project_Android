@@ -2,17 +2,27 @@ package com.example.final_project.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.final_project.MainActivity;
 import com.example.final_project.R;
+import com.example.final_project.models.User;
+import com.example.final_project.networks.RetrofitClient;
+import com.example.final_project.networks.UserApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private EditText nameEditText, usernameEditText, emailEditText, passwordEditText, cfPasswordEditText;
+    private EditText nameEditText, usernameEditText, emailEditText, passwordEditText, cfPasswordEditText, phoneEditText;
     private Button signUpButton;
 
     @Override
@@ -26,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         cfPasswordEditText = findViewById(R.id.cfpasswordEditText);
+        phoneEditText = findViewById(R.id.phoneEditText);
         signUpButton = findViewById(R.id.signUpButton);
 
         // Set up SignUp button click listener
@@ -37,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
                 String confirmPassword = cfPasswordEditText.getText().toString().trim();
+                String phone = phoneEditText.getText().toString().trim();
 
                 // Basic validation
                 if (name.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
@@ -59,13 +71,34 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Placeholder for registration logic (e.g., save to database or send to server)
-                Toast.makeText(SignUpActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                User user = new User(name, username, email, password, phone);
+                signUp(user);
+            }
+        });
+    }
 
-                // Optionally, navigate to LoginActivity after successful signup
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+    private void signUp(User user) {
+        UserApiService apiService = RetrofitClient.getUserApiService();
+        Call<User> call = apiService.register(user);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful() && response.body() != null)
+                {
+                    Toast.makeText(SignUpActivity.this, "Đăng kí thành công!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                    finish();
+                }
+                else
+                {
+                    Toast.makeText(SignUpActivity.this, "Đăng kí thất bại!", Toast.LENGTH_SHORT).show();
+                    Log.d("Sign up error", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Toast.makeText(SignUpActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -36,6 +36,16 @@
         android:background="@drawable/edittext_border" />
 
     <EditText
+        android:id="@+id/phoneEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Số điện thoại"
+        android:inputType="phone"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@drawable/edittext_border" />
+
+    <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
