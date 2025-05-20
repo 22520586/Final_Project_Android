@@ -1,6 +1,7 @@
 package com.example.final_project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,11 +50,16 @@ public class MainActivity extends AppCompatActivity {
     private AddDocumentDialogHelper dialogHelper;
     private DropdownMenuHelper dropdownMenuHelper;
     private UserProfileDialogHelper userProfileDialogHelper;
+    private SharedPreferences sharedPreferences;
+
+    private static final String PREFS_NAME = "SmartToken";
+    private static final String KEY_TOKEN = "token";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         // Khởi tạo các view
         initializeViews();
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchDocuments()
     {
-        DocumentApiServices apiServices = RetrofitClient.getDocumentApiService();
+        DocumentApiServices apiServices = RetrofitClient.getDocumentApiService(this);
         Call<List<Document>> call = apiServices.getAllDocuments();
         call.enqueue(new Callback<List<Document>>() {
             @Override
@@ -205,5 +211,9 @@ public class MainActivity extends AppCompatActivity {
     // Phương thức để hiển thị thông báo từ các helper
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void logout() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
     }
 }
