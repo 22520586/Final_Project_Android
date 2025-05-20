@@ -16,6 +16,7 @@ import com.example.final_project.models.User;
 import com.example.final_project.networks.RetrofitClient;
 import com.example.final_project.networks.UserApiService;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -78,11 +79,11 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void signUp(User user) {
-        UserApiService apiService = RetrofitClient.getUserApiService();
-        Call<User> call = apiService.register(user);
-        call.enqueue(new Callback<User>() {
+        UserApiService apiService = RetrofitClient.getUserApiService(this);
+        Call<ResponseBody> call = apiService.register(user);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful() && response.body() != null)
                 {
                     Toast.makeText(SignUpActivity.this, "Đăng kí thành công!", Toast.LENGTH_SHORT).show();
@@ -97,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(SignUpActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

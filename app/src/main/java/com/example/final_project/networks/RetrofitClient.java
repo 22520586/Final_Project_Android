@@ -1,5 +1,8 @@
 package com.example.final_project.networks;
 
+import android.content.Context;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -8,26 +11,30 @@ public class RetrofitClient {
     private static String BASE_URL = "http://10.0.2.2:3052/api/v1/";
     private static DocumentApiServices documentApiServices;
     private static UserApiService userApiService;
-    private static Retrofit getRetrofit() {
+    private static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new AuthInterceptor(context))
+                    .build();
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
     }
 
-    public static UserApiService getUserApiService() {
+    public static UserApiService getUserApiService(Context context) {
         if (userApiService == null) {
-            userApiService = getRetrofit().create(UserApiService.class);
+            userApiService = getRetrofit(context).create(UserApiService.class);
         }
         return userApiService;
     }
 
-    public static DocumentApiServices getDocumentApiService() {
+    public static DocumentApiServices getDocumentApiService(Context context) {
         if (documentApiServices == null) {
-            documentApiServices = getRetrofit().create(DocumentApiServices.class);
+            documentApiServices = getRetrofit(context).create(DocumentApiServices.class);
         }
         return documentApiServices;
     }
