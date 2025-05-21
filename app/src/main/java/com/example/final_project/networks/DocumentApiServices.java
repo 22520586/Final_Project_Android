@@ -9,6 +9,6 @@ import retrofit2.http.GET;
 
 public interface DocumentApiServices {
 
-    @GET("document")
+    @GET("document/get-docs-user")
     Call<List<Document>> getAllDocuments();
 }
