@@ -110,18 +110,13 @@
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
-                <TextView
+                <Switch
+                    android:id="@+id/switchTheme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sáng"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
+                    android:textOff="Sáng"
+                    android:textOn="Tối" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
-                    android:src="@android:drawable/ic_menu_more" />
             </LinearLayout>
 
 
