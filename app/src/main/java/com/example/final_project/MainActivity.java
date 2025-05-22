@@ -3,6 +3,8 @@ package com.example.final_project;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView userIconView;
     private BottomNavigationView bottomNavigationView;
 
+    private DocumentApiServices apiServices = RetrofitClient.getDocumentApiService(this);
+
     private DocumentManager documentManager;
     private AddDocumentDialogHelper dialogHelper;
     private DropdownMenuHelper dropdownMenuHelper;
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
+        searchEditText = findViewById(R.id.searchEditText);
         // Khởi tạo các view
         initializeViews();
 
@@ -80,6 +84,23 @@ public class MainActivity extends AppCompatActivity {
 
         // Thiết lập BottomNavigationView
         setupBottomNavigation();
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                performSearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void initializeViews() {
@@ -106,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchDocuments()
     {
-        DocumentApiServices apiServices = RetrofitClient.getDocumentApiService(this);
         Call<List<Document>> call = apiServices.getAllDocuments();
         call.enqueue(new Callback<List<Document>>() {
             @Override
@@ -197,6 +217,29 @@ public class MainActivity extends AppCompatActivity {
             adapter.showPinnedDocuments();
             titleText.setText("Tài liệu đã ghim");
         }
+    }
+
+    private void performSearch(String query) {
+        Call<List<Document>> call = apiServices.searchDocuments(query);
+        call.enqueue(new Callback<List<Document>>() {
+            @Override
+            public void onResponse(Call<List<Document>> call, Response<List<Document>> response) {
+                if(response.isSuccessful() && response.body() != null)
+                {
+                    documentList.clear();
+                    documentList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    showToast("Lỗi khi tìm kiếm tài liệu: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Document>> call, Throwable t) {
+                showToast("Lỗi: " + t.getMessage());
+            }
+        });
+
     }
 
     // Getter để các helper có thể truy cập
