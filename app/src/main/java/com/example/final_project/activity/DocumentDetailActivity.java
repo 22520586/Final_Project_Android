@@ -3,11 +3,14 @@ package com.example.final_project.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,10 +22,13 @@ import com.example.final_project.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.net.URLEncoder;
+
 public class DocumentDetailActivity extends AppCompatActivity {
 
     private static final String EXTRA_DOCUMENT_TITLE = "document_title";
     private static final String EXTRA_DOCUMENT_TYPE = "document_type";
+    private static final String EXTRA_FILE_URL = "file_url";
 
     private TextView documentTitleText;
     private ImageButton backButton;
@@ -40,14 +46,25 @@ public class DocumentDetailActivity extends AppCompatActivity {
         // Get document information from intent
         String documentTitle = getIntent().getStringExtra(EXTRA_DOCUMENT_TITLE);
         String documentType = getIntent().getStringExtra(EXTRA_DOCUMENT_TYPE);
+        String documentUrl = getIntent().getStringExtra(EXTRA_FILE_URL);
 
-        // Set document title
-        if (documentTitle != null) {
-            documentTitleText.setText(documentTitle);
+        try {
+            WebView webView = findViewById(R.id.webView);
+            webView.getSettings().setJavaScriptEnabled(true);
+            String viewerUrl = "https://docs.google.com/gview?embedded=true&url=" + documentUrl;
+            webView.loadUrl(viewerUrl);
+
+            // Set document title
+            if (documentTitle != null) {
+                documentTitleText.setText(documentTitle);
+            }
+
+            // Setup button listeners
+            setupButtonListeners();
+        } catch (Exception e) {
+            Toast.makeText(this, "lỗi" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.d("Merror: ", e.getMessage());
         }
-
-        // Setup button listeners
-        setupButtonListeners();
     }
 
     private void initializeViews() {
@@ -172,10 +189,14 @@ public class DocumentDetailActivity extends AppCompatActivity {
     /**
      * Static method to create intent for launching this activity
      */
-    public static Intent newIntent(Context context, String documentTitle, String documentType) {
+    public static Intent newIntent(Context context, String documentTitle, String documentType, String fileUrl) {
         Intent intent = new Intent(context, DocumentDetailActivity.class);
+        Log.d("DocumentDetailActivity", "Creating intent with title: " + fileUrl);
+        intent.putExtra(EXTRA_FILE_URL, fileUrl); // Add fileUrl to the intent)
         intent.putExtra(EXTRA_DOCUMENT_TITLE, documentTitle);
         intent.putExtra(EXTRA_DOCUMENT_TYPE, documentType);
+        intent.setDataAndType(Uri.parse(fileUrl), "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         return intent;
     }
 }

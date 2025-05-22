@@ -7,6 +7,7 @@ public class Document {
     private String type;
     private String title;
     private boolean isPinned;
+    private String fileUrl;
     private String path;
     private String createdAt; // thời gian tạo (timestamp)
     private String updatedAt; // thời gian cập nhật (timestamp)
@@ -18,11 +19,11 @@ public class Document {
         this.path = "";
     }
 
-    public Document(String type, String title, String path, boolean isPinned) {
+    public Document(String type, String title, String fileUrl, boolean isPinned) {
         this.type = type;
         this.title = title;
         this.isPinned = isPinned;
-        this.path = path;
+        this.fileUrl = fileUrl;
     }
 
     // Constructor với đầy đủ tham số
@@ -45,6 +46,8 @@ public class Document {
     public String getTitle() {
         return title;
     }
+
+    public String getUrl() {return fileUrl; }
 
     public void setTitle(String title) {
         this.title = title;
