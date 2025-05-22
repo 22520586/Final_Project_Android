@@ -60,17 +60,55 @@ public class FolderActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Dữ liệu giả lập (có thể thay bằng dữ liệu thực từ cơ sở dữ liệu)
         folderList = new ArrayList<>();
         folderList.add(new Folder("Công việc"));
         folderList.add(new Folder("Cá nhân"));
         folderList.add(new Folder("Học tập"));
 
-        // Thiết lập adapter với OnFolderClickListener
-        adapter = new FolderAdapter(this, folderList, folder -> {
-            Intent intent = new Intent(FolderActivity.this, FolderDetailActivity.class);
-            intent.putExtra("FOLDER_NAME", folder.getName());
-            startActivity(intent);
+        adapter = new FolderAdapter(this, folderList, new FolderAdapter.OnFolderClickListener() {
+            @Override
+            public void onFolderClick(Folder folder) {
+                if (folder != null && folder.getName() != null) {
+                    Intent intent = new Intent(FolderActivity.this, FolderDetailActivity.class);
+                    intent.putExtra("FOLDER_NAME", folder.getName());
+                    startActivity(intent);
+                } else {
+                    showToast("Dữ liệu thư mục không hợp lệ");
+                }
+            }
+
+            @Override
+            public void onRenameFolder(Folder folder, String newName) {
+                if (folder != null && newName != null && !newName.trim().isEmpty()) {
+                    boolean isDuplicate = folderList.stream()
+                            .anyMatch(f -> f.getName().equalsIgnoreCase(newName) && f != folder);
+                    if (isDuplicate) {
+                        showToast("Tên thư mục đã tồn tại");
+                    } else {
+                        folder.setName(newName);
+                        adapter.notifyDataSetChanged();
+                        showToast("Đã đổi tên thành: " + newName);
+                    }
+                } else {
+                    showToast("Tên thư mục không hợp lệ");
+                }
+            }
+
+            @Override
+            public void onDeleteFolder(Folder folder) {
+                if (folder != null) {
+                    new androidx.appcompat.app.AlertDialog.Builder(FolderActivity.this)
+                            .setTitle("Xóa thư mục")
+                            .setMessage("Bạn có chắc muốn xóa " + folder.getName() + "?")
+                            .setPositiveButton("Xóa", (dialog, which) -> {
+                                folderList.remove(folder);
+                                adapter.notifyDataSetChanged();
+                                showToast("Đã xóa: " + folder.getName());
+                            })
+                            .setNegativeButton("Hủy", null)
+                            .show();
+                }
+            }
         });
         recyclerView.setAdapter(adapter);
     }

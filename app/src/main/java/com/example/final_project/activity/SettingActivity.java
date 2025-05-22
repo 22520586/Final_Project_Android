@@ -36,14 +36,13 @@ public class SettingActivity extends AppCompatActivity {
         tvStorage = findViewById(R.id.tvStorage);
         storageProgressBar = findViewById(R.id.storageProgressBar);
         switchNotification = findViewById(R.id.switchNotification);
-        switchAIAssistant = findViewById(R.id.switchAIAssistant);
-        switchDataSaver = findViewById(R.id.switchDataSaver);
+//        switchAIAssistant = findViewById(R.id.switchAIAssistant);
+//        switchDataSaver = findViewById(R.id.switchDataSaver);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         // Kiểm tra null
         if (tvUsername == null || tvEmail == null || tvStorage == null || storageProgressBar == null ||
-                switchNotification == null || switchAIAssistant == null || switchDataSaver == null ||
-                bottomNavigationView == null) {
+                switchNotification == null || bottomNavigationView == null) {
             Toast.makeText(this, "Lỗi: Không thể hiển thị màn hình cài đặt!", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -57,8 +56,8 @@ public class SettingActivity extends AppCompatActivity {
 
         // Khôi phục trạng thái switch từ SharedPreferences
         switchNotification.setChecked(sharedPreferences.getBoolean("notification_enabled", true));
-        switchAIAssistant.setChecked(sharedPreferences.getBoolean("ai_assistant_enabled", true));
-        switchDataSaver.setChecked(sharedPreferences.getBoolean("data_saver_enabled", false));
+//        switchAIAssistant.setChecked(sharedPreferences.getBoolean("ai_assistant_enabled", true));
+//        switchDataSaver.setChecked(sharedPreferences.getBoolean("data_saver_enabled", false));
 
         // Xử lý sự kiện cho các switch
         switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -68,19 +67,19 @@ public class SettingActivity extends AppCompatActivity {
             Toast.makeText(this, "Thông báo: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
         });
 
-        switchAIAssistant.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("ai_assistant_enabled", isChecked);
-            editor.apply();
-            Toast.makeText(this, "Trợ lý AI: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
-        });
-
-        switchDataSaver.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("data_saver_enabled", isChecked);
-            editor.apply();
-            Toast.makeText(this, "Tiết kiệm dữ liệu: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
-        });
+//        switchAIAssistant.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putBoolean("ai_assistant_enabled", isChecked);
+//            editor.apply();
+//            Toast.makeText(this, "Trợ lý AI: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
+//        });
+//
+//        switchDataSaver.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putBoolean("data_saver_enabled", isChecked);
+//            editor.apply();
+//            Toast.makeText(this, "Tiết kiệm dữ liệu: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
+//        });
 
         // Thiết lập BottomNavigationView
         setupBottomNavigation();

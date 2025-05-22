@@ -45,17 +45,17 @@
         android:layout_below="@id/toolbar"
         android:layout_above="@id/bottomNavigation" />
 
-    <!-- Thanh điều hướng dưới cùng -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        android:elevation="8dp"
-        app:itemIconTint="@color/bottom_nav_colors"
-        app:itemTextColor="@color/bottom_nav_colors"
-        app:menu="@menu/bottom_navigation_menu" />
+<!--    &lt;!&ndash; Thanh điều hướng dưới cùng &ndash;&gt;-->
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottomNavigation"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="@android:color/white"-->
+<!--        android:elevation="8dp"-->
+<!--        app:itemIconTint="@color/bottom_nav_colors"-->
+<!--        app:itemTextColor="@color/bottom_nav_colors"-->
+<!--        app:menu="@menu/bottom_navigation_menu" />-->
 
     <!-- FAB for AI assistance -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_above="@id/bottomNavigation"
+        android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_ai"
         app:backgroundTint="@color/blue_primary"

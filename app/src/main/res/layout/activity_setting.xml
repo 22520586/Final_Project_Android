@@ -82,10 +82,6 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_more" />
             </LinearLayout>
 
             <!-- Cài đặt chung -->
@@ -114,49 +110,15 @@
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
-                <TextView
+                <Switch
+                    android:id="@+id/switchTheme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sáng"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
+                    android:textOff="Sáng"
+                    android:textOn="Tối" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
-                    android:src="@android:drawable/ic_menu_more" />
             </LinearLayout>
 
-            <!-- Ngôn ngữ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Ngôn ngữ"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tiếng Việt"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
-                    android:src="@android:drawable/ic_menu_more" />
-            </LinearLayout>
 
             <!-- Thông báo -->
             <LinearLayout
@@ -222,59 +184,6 @@
                 android:max="100"
                 android:progress="48" />
 
-            <!-- Tính năng AI -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="TÍNH NĂNG AI"
-                android:textColor="#2196F3"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- Trợ lý AI -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Trợ lý AI"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchAIAssistant"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <!-- Tiết kiệm dữ liệu -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Tiết kiệm dữ liệu"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchDataSaver"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
