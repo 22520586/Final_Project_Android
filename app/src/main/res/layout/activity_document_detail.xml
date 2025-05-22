@@ -38,99 +38,12 @@
     </RelativeLayout>
 
     <!-- Document content -->
-    <ScrollView
+    <WebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:layout_above="@id/bottomNavigation">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Content lines -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="180dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <!-- More content lines -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-
-            <View
-                android:layout_width="200dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="#EEEEEE" />
-        </LinearLayout>
-    </ScrollView>
+        android:layout_above="@id/bottomNavigation" />
 
 <!--    &lt;!&ndash; Thanh điều hướng dưới cùng &ndash;&gt;-->
 <!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->

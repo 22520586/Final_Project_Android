@@ -165,7 +165,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void openDocumentDetail(Document document) {
         Intent intent = DocumentDetailActivity.newIntent(
-                context, document.getTitle(), document.getType());
+                context, document.getTitle(), document.getType(), document.getUrl());
         context.startActivity(intent);
     }
 
