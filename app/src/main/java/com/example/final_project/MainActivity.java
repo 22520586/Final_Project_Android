@@ -2,10 +2,15 @@ package com.example.final_project;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -13,7 +18,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,11 +38,19 @@ import com.example.final_project.managers.DocumentManager;
 import com.example.final_project.models.Document;
 import com.example.final_project.networks.DocumentApiServices;
 import com.example.final_project.networks.RetrofitClient;
+import com.example.final_project.utils.FileUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "SmartToken";
     private static final String KEY_TOKEN = "token";
+    private static final int STORAGE_PERMISSION_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +145,66 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE && dialogHelper != null) {
+            dialogHelper.handlePermissionResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+        private void uploadFile(Uri fileUri, String title) {
+            File file = FileUtils.getFileFromUri(this, fileUri); // Xem bên dưới
+
+            RequestBody requestFile = RequestBody.create(
+                    MediaType.parse(getContentResolver().getType(fileUri)), file);
+            MultipartBody.Part documentPart = MultipartBody.Part.createFormData("document", file.getName(), requestFile);
+
+            RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
+
+            Call<ResponseBody> call = apiServices.uploadDocument(documentPart, titlePart);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Tải lên thành công", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Thất bại: " + response.message(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    public String getPathFromUri(Uri uri) {
+        String[] projection = { MediaStore.Files.FileColumns.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(columnIndex);
+            cursor.close();
+            return path;
+        }
+        return null;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == RESULT_OK && data != null) {
+            Uri fileUri = data.getData();
+            showUploadMetadataDialog(fileUri);
+        }
+    }
+
     private void fetchDocuments()
     {
         Call<List<Document>> call = apiServices.getAllDocuments();
@@ -163,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                togglePinnedDocuments();
+                getPinnedDocuments();
             }
         });
 
@@ -183,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void setupBottomNavigation() {
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -208,15 +290,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void togglePinnedDocuments() {
-        if (adapter.isShowingPinned()) {
-            // Nếu đang hiển thị tài liệu ghim, chuyển về hiển thị tất cả
-            adapter.showAllDocuments();
-            titleText.setText("Quản lý Tài liệu");
-        } else {
-            // Nếu đang hiển thị tất cả, chuyển sang hiển thị tài liệu ghim
-            adapter.showPinnedDocuments();
-            titleText.setText("Tài liệu đã ghim");
-        }
+
+    }
+
+    private void getPinnedDocuments()
+    {
+        Call<List<Document>> call = apiServices.getPinnedDocuments();
+        call.enqueue(new Callback<List<Document>>() {
+            @Override
+            public void onResponse(Call<List<Document>> call, Response<List<Document>> response) {
+                if(response.isSuccessful() && response.body() != null)
+                {
+                    documentList.clear();
+                    documentList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    showToast("Lỗi khi tải tài liệu: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Document>> call, Throwable t) {
+                showToast("Lỗi kết nối: " + t.getMessage());
+                Log.e("MainActivity", "Lỗi kết nối: " + t.getMessage(), t);
+            }
+        });
     }
 
     private void performSearch(String query) {
@@ -240,6 +338,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void showUploadMetadataDialog(Uri fileUri)
+    {
+        // Inflate custom layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.activity_input_document_data, null);
+
+        EditText editFileName = dialogView.findViewById(R.id.editFileName);
+        EditText editTags = dialogView.findViewById(R.id.editTags);
+
+        // Tạo dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Nhập thông tin tài liệu")
+                .setView(dialogView)
+                .setPositiveButton("Upload", (dialogInterface, i) -> {
+                    String title = editFileName.getText().toString().trim();
+                    String tags = editTags.getText().toString().trim();
+
+                    if (!title.isEmpty()) {
+                        uploadFile(fileUri, title);
+                    } else {
+                        Toast.makeText(this, "Tên tài liệu không được để trống", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .create();
+
+        dialog.show();
     }
 
     // Getter để các helper có thể truy cập

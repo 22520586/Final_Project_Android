@@ -3,6 +3,8 @@ package com.example.final_project.models;
 import com.google.gson.annotations.SerializedName;
 
 public class Document {
+    @SerializedName("_id")
+    private String id;
     @SerializedName("fileType")
     private String type;
     private String title;
@@ -27,8 +29,9 @@ public class Document {
     }
 
     // Constructor với đầy đủ tham số
-    public Document(String type, String title, String path, boolean isPinned,
+    public Document(String id, String type, String title, String path, boolean isPinned,
                     long createdAt, long updatedAt) {
+        this.id = id;
         this.type = type;
         this.title = title;
         this.isPinned = isPinned;
@@ -38,6 +41,8 @@ public class Document {
     public String getType() {
         return type;
     }
+
+    public String getId() {return id;}
 
     public void setType(String type) {
         this.type = type;

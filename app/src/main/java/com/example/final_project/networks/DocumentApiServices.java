@@ -5,6 +5,8 @@ import com.example.final_project.models.Document;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -21,9 +23,17 @@ public interface DocumentApiServices {
     @GET("document/search")
     Call<List<Document>> searchDocuments(@Query("q") String query);
 
-    @GET("document/:id")
+    @GET("document/{id}")
     Call<Document> getDocumentById(@Path("id") int id);
 
-    @POST("document/upload")
-    Call<List<Document>> uploadDocument(@Part MultipartBody.Part file);
+    @GET("document/get-pinned-docs")
+    Call<List<Document>> getPinnedDocuments();
+    @Multipart
+    @POST("document/")
+    Call<ResponseBody> uploadDocument(
+            @Part MultipartBody.Part document,
+            @Part("title") RequestBody title);
+
+    @POST("document/toggle-pin/{id}")
+    Call<Document> togglePin(@Path("id") int documentId);
 }

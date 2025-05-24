@@ -165,7 +165,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void openDocumentDetail(Document document) {
         Intent intent = DocumentDetailActivity.newIntent(
-                context, document.getTitle(), document.getType(), document.getUrl());
+                context, document.getTitle(), document.getType(), document.getUrl(), document.getId());
         context.startActivity(intent);
     }
 
@@ -206,12 +206,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         notifyDataSetChanged();
     }
 
-    public void showAllDocuments() {
-        showingPinned = false;
-        documentList.clear();
-        documentList.addAll(allDocuments);
-        notifyDataSetChanged();
-    }
 
     public void showPinnedDocuments() {
         showingPinned = true;
