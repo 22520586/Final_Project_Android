@@ -1,6 +1,9 @@
 package com.example.final_project.helpers;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
@@ -14,6 +17,13 @@ import android.widget.TextView;
 
 import com.example.final_project.MainActivity;
 import com.example.final_project.R;
+import com.example.final_project.activity.LoginActivity;
+import com.example.final_project.networks.RetrofitClient;
+import com.example.final_project.networks.UserApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserProfileDialogHelper {
 
@@ -96,7 +106,7 @@ public class UserProfileDialogHelper {
         // Set up gender spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 activity,
-                R.array.gender_array, // You need to create this in strings.xml
+                R.array.gender_array,
                 android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -194,7 +204,6 @@ public class UserProfileDialogHelper {
                     return;
                 }
 
-                // In a real app, you would verify the current password and update the new one
                 activity.showToast("Đổi mật khẩu thành công");
                 changePasswordDialog.dismiss();
             }
@@ -224,19 +233,48 @@ public class UserProfileDialogHelper {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform logout
-                activity.showToast("Đăng xuất thành công");
+                // Perform logout API call
+                UserApiService userApiService = RetrofitClient.getUserApiService(activity);
+                Call<Void> call = userApiService.logout();
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            activity.showToast("Đăng xuất thành công");
 
-                // Close all dialogs
-                if (userProfileDialog != null && userProfileDialog.isShowing()) {
-                    userProfileDialog.dismiss();
-                }
-                logoutConfirmationDialog.dismiss();
+                            // Close all dialogs
+                            if (userProfileDialog != null && userProfileDialog.isShowing()) {
+                                userProfileDialog.dismiss();
+                            }
+                            logoutConfirmationDialog.dismiss();
 
-                // In a real app, you would navigate to the login screen or clear user session
+                            // Clear user session
+                            clearUserSession();
+
+                            // Navigate to login screen
+                            Intent intent = new Intent(activity, LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            activity.startActivity(intent);
+                            activity.finish();
+                        } else {
+                            activity.showToast("Đăng xuất thất bại. Vui lòng thử lại.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        activity.showToast("Lỗi kết nối: " + t.getMessage());
+                    }
+                });
             }
         });
 
         logoutConfirmationDialog.show();
+    }
+
+    private void clearUserSession() {
+        SharedPreferences prefs = activity.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear().apply(); // Clear all stored user data
     }
 }
