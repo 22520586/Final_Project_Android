@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        private void uploadFile(Uri fileUri, String title) {
+        private void uploadFile(Uri fileUri, String title, String tags) {
             File file = FileUtils.getFileFromUri(this, fileUri); // Xem bên dưới
 
             RequestBody requestFile = RequestBody.create(
@@ -162,8 +162,9 @@ public class MainActivity extends AppCompatActivity {
             MultipartBody.Part documentPart = MultipartBody.Part.createFormData("document", file.getName(), requestFile);
 
             RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
+            RequestBody tagsPart = RequestBody.create(MediaType.parse("text/plain"), tags);
 
-            Call<ResponseBody> call = apiServices.uploadDocument(documentPart, titlePart);
+            Call<ResponseBody> call = apiServices.uploadDocument(documentPart, titlePart, tagsPart);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -356,9 +357,8 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Upload", (dialogInterface, i) -> {
                     String title = editFileName.getText().toString().trim();
                     String tags = editTags.getText().toString().trim();
-
                     if (!title.isEmpty()) {
-                        uploadFile(fileUri, title);
+                        uploadFile(fileUri, title, tags);
                     } else {
                         Toast.makeText(this, "Tên tài liệu không được để trống", Toast.LENGTH_SHORT).show();
                     }
