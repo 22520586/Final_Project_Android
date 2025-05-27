@@ -41,7 +41,7 @@ public interface DocumentApiServices {
             @Part("tags") RequestBody tags);
 
     @POST("document/toggle-pin/{id}")
-    Call<Document> togglePin(@Path("id") int documentId);
+    Call<Document> togglePin(@Path("id") String documentId);
 
     @DELETE("document/{id}")
     Call<ResponseBody> deleteDocument(@Path("id") String documentId);

@@ -206,15 +206,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void togglePinStatus(int position) {
         Document document = documentList.get(position);
-        document.setPinned(!document.isPinned());
-
-        for (Document doc : allDocuments) {
-            if (doc.getTitle().equals(document.getTitle()) &&
-                    doc.getType().equals(document.getType())) {
-                doc.setPinned(document.isPinned());
-                break;
-            }
-        }
+        String documentId = document.getId();
+        togglePin(documentId);
 
         Toast.makeText(context,
                 document.isPinned() ? "Đã ghim: " + document.getTitle()
@@ -222,6 +215,24 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 Toast.LENGTH_SHORT).show();
 
         notifyItemChanged(position);
+    }
+
+    private void togglePin(String id) {
+        Call<Document> call = apiServices.togglePin(id);
+        call.enqueue(new Callback<Document>() {
+            @Override
+            public void onResponse(Call<Document> call, Response<Document> response) {
+                if(response.isSuccessful())
+                {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Document> call, Throwable t) {
+                Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void deleteDocument(String id) {
