@@ -49,4 +49,9 @@ public interface DocumentApiServices {
     @PATCH("document/{id}")
     Call<ResponseBody> updateDocument(@Path("id") String documentId, @Body UpdateRequest updatedDocument);
 
+    @GET("document/filter")
+    Call<List<Document>> filterDocument(
+            @Query("tags") String tags,
+            @Query("fileType") String type
+    );
 }

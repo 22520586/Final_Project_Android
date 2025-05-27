@@ -10,4 +10,6 @@ import retrofit2.http.Path;
 public interface BotApiServices {
     @POST("bot/summarize/{id}")
     Call<JsonObject> summarizeDocument(@Path("id") String documentId);
+    @POST("bot/semantic-search/{id}")
+    Call<JsonObject> semanticSearch(@Path("id") String documentId);
 }

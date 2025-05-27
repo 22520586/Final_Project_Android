@@ -154,48 +154,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        private void uploadFile(Uri fileUri, String title, String tags) {
-            File file = FileUtils.getFileFromUri(this, fileUri); // Xem bên dưới
+    private void uploadFile(Uri fileUri, String title, String tags) {
+        File file = FileUtils.getFileFromUri(this, fileUri); // Xem bên dưới
 
-            RequestBody requestFile = RequestBody.create(
-                    MediaType.parse(getContentResolver().getType(fileUri)), file);
-            MultipartBody.Part documentPart = MultipartBody.Part.createFormData("document", file.getName(), requestFile);
+        RequestBody requestFile = RequestBody.create(
+                MediaType.parse(getContentResolver().getType(fileUri)), file);
+        MultipartBody.Part documentPart = MultipartBody.Part.createFormData("document", file.getName(), requestFile);
 
-            RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
-            RequestBody tagsPart = RequestBody.create(MediaType.parse("text/plain"), tags);
+        RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
+        RequestBody tagsPart = RequestBody.create(MediaType.parse("text/plain"), tags);
 
-            Call<ResponseBody> call = apiServices.uploadDocument(documentPart, titlePart, tagsPart);
+        Call<ResponseBody> call = apiServices.uploadDocument(documentPart, titlePart, tagsPart);
 
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(MainActivity.this, "Tải lên thành công", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "Thất bại: " + response.message(), Toast.LENGTH_SHORT).show();
-                    }
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Tải lên thành công", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Thất bại: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-    public String getPathFromUri(Uri uri) {
-        String[] projection = { MediaStore.Files.FileColumns.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
-            cursor.moveToFirst();
-            String path = cursor.getString(columnIndex);
-            cursor.close();
-            return path;
-        }
-        return null;
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    public void updateFilteredDocuments(List<Document> filteredDocuments) {
+        documentList.clear();
+        documentList.addAll(filteredDocuments);
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
