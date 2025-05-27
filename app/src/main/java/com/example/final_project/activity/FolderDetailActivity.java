@@ -56,9 +56,9 @@ public class FolderDetailActivity extends AppCompatActivity {
 
         // Danh sách tài liệu mẫu
         documentList = new ArrayList<>();
-        documentList.add(new Document("pdf", "Tài liệu 1"));
-        documentList.add(new Document("docx", "Tài liệu 2"));
-        documentList.add(new Document("txt", "Tài liệu 3"));
+//        documentList.add(new Document("pdf", "Tài liệu 1"));
+//        documentList.add(new Document("docx", "Tài liệu 2"));
+//        documentList.add(new Document("txt", "Tài liệu 3"));
 
         // Thiết lập RecyclerView
         adapter = new DocumentAdapter(FolderDetailActivity.this, documentList);

@@ -11,6 +11,8 @@ public class RetrofitClient {
     private static String BASE_URL = "http://10.0.2.2:3052/api/v1/";
     private static DocumentApiServices documentApiServices;
     private static UserApiService userApiService;
+    private static BotApiServices botApiServices;
+
     private static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
             OkHttpClient client = new OkHttpClient.Builder()
@@ -37,6 +39,13 @@ public class RetrofitClient {
             documentApiServices = getRetrofit(context).create(DocumentApiServices.class);
         }
         return documentApiServices;
+    }
+
+    public static BotApiServices getBotApiService(Context context) {
+        if (botApiServices == null) {
+            botApiServices = getRetrofit(context).create(BotApiServices.class);
+        }
+        return botApiServices;
     }
 
 }

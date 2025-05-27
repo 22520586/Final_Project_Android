@@ -33,8 +33,12 @@ public class EditTagBottomSheet extends BottomSheetDialogFragment {
         void onTagsSelected(List<String> tags);
     }
 
-    public static EditTagBottomSheet newInstance() {
-        return new EditTagBottomSheet();
+    public static EditTagBottomSheet newInstance(ArrayList<String> existingTags) {
+        EditTagBottomSheet fragment = new EditTagBottomSheet();
+        Bundle args = new Bundle();
+        args.putStringArrayList("existingTags", existingTags);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public void setOnTagsSelectedListener(OnTagsSelectedListener listener) {
@@ -62,6 +66,14 @@ public class EditTagBottomSheet extends BottomSheetDialogFragment {
                 displayCurrentTags(currentTagsContainer);
             }
         });
+
+        if (getArguments() != null) {
+            ArrayList<String> existingTags = getArguments().getStringArrayList("existingTags");
+            if (existingTags != null) {
+                currentTags.addAll(existingTags);
+            }
+            displayCurrentTags(currentTagsContainer);
+        }
 
         // Xử lý thêm tag mới
         btnAddTag.setOnClickListener(v -> {

@@ -22,11 +22,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.final_project.MainActivity;
 import com.example.final_project.activity.DocumentDetailActivity;
 import com.example.final_project.bottom_sheet.EditDocumentBottomSheet;
 import com.example.final_project.R;
 import com.example.final_project.models.Document;
+import com.example.final_project.networks.DocumentApiServices;
+import com.example.final_project.networks.RetrofitClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
@@ -42,6 +50,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         this.allDocuments = new ArrayList<>(documentList);  // Tạo bản sao
     }
 
+    private DocumentApiServices apiServices = RetrofitClient.getDocumentApiService(context);
+
     @NonNull
     @Override
     public DocumentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,10 +59,27 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         return new DocumentViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull DocumentViewHolder holder, int position) {
         Document document = documentList.get(position);
-        holder.typeText.setText(document.getType());
+        String type = "";
+        switch (document.getType()) {
+            case "application/pdf":
+                type = "PDF";
+                break;
+            case "application/msword":
+                type = "DOC";
+                break;
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                type = "DOCX";
+                break;
+            default:
+                type = "Unknown";
+                break;
+        }
+        holder.typeText.setText(type);
         holder.titleText.setText(document.getTitle());
 
         if (document.isPinned()) {
@@ -85,9 +112,14 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 return true;
             } else if (id == R.id.action_edit) {
                 EditDocumentBottomSheet bottomSheet = EditDocumentBottomSheet.newInstance(
+                        document.getId(),
                         document.getTitle(),
-                        document.getDescription() // bạn có thể sửa nếu không có mô tả
+                        new ArrayList<String>(document.getTags())
                 );
+                bottomSheet.setOnDocumentUpdatedListener(updatedDoc -> {
+                    documentList.set(position, updatedDoc);
+                    notifyItemChanged(position);
+                });
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
                 return true;
 
@@ -151,7 +183,10 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc chắn muốn xóa tài liệu '" + document.getTitle() + "' không?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    deleteDocument(position);
+                    deleteDocument(document.getId());
+                    documentList.remove(position);
+                    notifyItemRemoved(position);
+                    Toast.makeText(context, "Đã xóa tài liệu: " + document.getTitle(), Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Hủy", (dialog, which) -> {
                     new AlertDialog.Builder(context)
@@ -165,7 +200,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void openDocumentDetail(Document document) {
         Intent intent = DocumentDetailActivity.newIntent(
-                context, document.getTitle(), document.getType(), document.getUrl());
+                context, document.getTitle(), document.getType(), document.getUrl(), document.getId());
         context.startActivity(intent);
     }
 
@@ -189,29 +224,27 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         notifyItemChanged(position);
     }
 
-    private void deleteDocument(int position) {
-        Document document = documentList.get(position);
-        documentList.remove(position);
-
-        for (int i = 0; i < allDocuments.size(); i++) {
-            Document doc = allDocuments.get(i);
-            if (doc.getTitle().equals(document.getTitle()) &&
-                    doc.getType().equals(document.getType())) {
-                allDocuments.remove(i);
-                break;
+    private void deleteDocument(String id) {
+        Call<ResponseBody> call = apiServices.deleteDocument(id);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful())
+                {
+                    Toast.makeText(context, "Đã xóa tài liệu", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "Lỗi khi xóa tài liệu", Toast.LENGTH_SHORT).show();
+                }
             }
-        }
 
-        Toast.makeText(context, "Đã xóa: " + document.getTitle(), Toast.LENGTH_SHORT).show();
-        notifyDataSetChanged();
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    public void showAllDocuments() {
-        showingPinned = false;
-        documentList.clear();
-        documentList.addAll(allDocuments);
-        notifyDataSetChanged();
-    }
 
     public void showPinnedDocuments() {
         showingPinned = true;
