@@ -102,8 +102,6 @@ public class AddDocumentDialogHelper {
         // Get dialog elements
         LinearLayout uploadDocLayout = dialog.findViewById(R.id.uploadDocumentLayout);
         LinearLayout importCloudLayout = dialog.findViewById(R.id.importCloudLayout);
-        Button cancelButton = dialog.findViewById(R.id.cancelButton);
-        Button continueButton = dialog.findViewById(R.id.continueButton);
 
         // Set click listeners
         uploadDocLayout.setOnClickListener(v -> {
@@ -124,24 +122,7 @@ public class AddDocumentDialogHelper {
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(activity, "Tiếp tục", Toast.LENGTH_SHORT).show();
-
-                dialog.dismiss();
-                // TODO: Implement next step based on selection
-            }
-        });
-
-        dialog.show();
+       dialog.show();
         // Make dialog width match parent
         Window window = dialog.getWindow();
         if (window != null) {

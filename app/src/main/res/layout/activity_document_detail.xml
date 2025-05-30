@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#F8FAFC">
 
     <!-- Top toolbar -->
     <RelativeLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue_primary"
+        android:background="#0057B8"
         android:paddingVertical="12dp"
         android:paddingHorizontal="16dp">
 
@@ -23,7 +23,8 @@
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back" />
+            android:contentDescription="Quay lại"
+            app:tint="@android:color/white" />
 
         <TextView
             android:id="@+id/documentTitleText"
@@ -32,9 +33,9 @@
             android:layout_centerInParent="true"
             android:text="Báo cáo tài chính Q2"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
     </RelativeLayout>
 
     <!-- Document content -->
@@ -43,19 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:layout_above="@id/bottomNavigation" />
-
-<!--    &lt;!&ndash; Thanh điều hướng dưới cùng &ndash;&gt;-->
-<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--        android:id="@+id/bottomNavigation"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:background="@android:color/white"-->
-<!--        android:elevation="8dp"-->
-<!--        app:itemIconTint="@color/bottom_nav_colors"-->
-<!--        app:itemTextColor="@color/bottom_nav_colors"-->
-<!--        app:menu="@menu/bottom_navigation_menu" />-->
+        android:layout_above="@id/aiButton" />
 
     <!-- FAB for AI assistance -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -66,6 +55,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:src="@drawable/ic_ai"
-        app:backgroundTint="@color/blue_primary"
-        android:contentDescription="AI Assistant" />
+        app:backgroundTint="#0057B8"
+        android:contentDescription="Trợ lý AI"
+        app:tint="@android:color/white" />
 </RelativeLayout>

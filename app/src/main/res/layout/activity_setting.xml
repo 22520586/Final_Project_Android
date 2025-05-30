@@ -2,61 +2,71 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
 
     <!-- Header -->
-    <LinearLayout
-        android:id="@+id/headerLayout"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/headerCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#2196F3"
-        android:padding="16dp"
+        app:cardBackgroundColor="#0057B8"
+        app:cardElevation="4dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/headerLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cài đặt"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cài đặt"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- Nội dung -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/headerLayout"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintTop_toBottomOf="@id/headerCard"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
             <!-- Tài khoản -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TÀI KHOẢN"
-                android:textColor="#2196F3"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textColor="#0057B8"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="12dp"
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@android:drawable/ic_menu_manage" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_manage"
+                    android:tint="#00A3FF" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -71,61 +81,37 @@
                         android:layout_height="wrap_content"
                         android:text="Nguyễn Văn A"
                         android:textColor="@android:color/black"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="nguyenvana@email.com"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="14sp" />
+                        android:textColor="#757575"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <!-- Cài đặt chung -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="CÀI ĐẶT CHUNG"
-                android:textColor="#2196F3"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- Giao diện -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Giao diện"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchTheme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOff="Sáng"
-                    android:textOn="Tối" />
-
-            </LinearLayout>
-
+                android:textColor="#0057B8"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
             <!-- Thông báo -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="12dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -134,29 +120,33 @@
                     android:layout_height="wrap_content"
                     android:text="Thông báo"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif" />
 
                 <Switch
                     android:id="@+id/switchNotification"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:trackTint="#ECEFF1"
+                    app:thumbTint="#00A3FF" />
             </LinearLayout>
 
             <!-- Lưu trữ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:text="LƯU TRỮ"
-                android:textColor="#2196F3"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textColor="#0057B8"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
+                android:paddingVertical="12dp"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -165,25 +155,29 @@
                     android:layout_height="wrap_content"
                     android:text="Dung lượng sử dụng"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif" />
 
                 <TextView
                     android:id="@+id/tvStorage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2.4GB / 5GB (48%)"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
+                    android:textColor="#757575"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
             </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/storageProgressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="8dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
-                android:progress="48" />
-
+                android:progress="48"
+                android:progressTint="#00A3FF"
+                android:backgroundTint="#ECEFF1" />
         </LinearLayout>
     </ScrollView>
 

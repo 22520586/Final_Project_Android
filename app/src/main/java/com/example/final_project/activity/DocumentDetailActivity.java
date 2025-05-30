@@ -122,7 +122,6 @@ public class DocumentDetailActivity extends AppCompatActivity {
         // Get views
         ImageButton closeButton = aiDialog.findViewById(R.id.btn_close_dialog);
         View summarizeLayout = aiDialog.findViewById(R.id.layout_summarize);
-        View searchLayout = aiDialog.findViewById(R.id.layout_search);
         View textToSpeechLayout = aiDialog.findViewById(R.id.layout_text_to_speech);
         View questionsLayout = aiDialog.findViewById(R.id.layout_questions);
 
@@ -141,16 +140,6 @@ public class DocumentDetailActivity extends AppCompatActivity {
                 summarizeText(getIntent().getStringExtra(EXTRA_DOCUMENT_ID));
                 aiDialog.dismiss();
                 // Add logic to handle document summarization
-            }
-        });
-
-        searchLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(DocumentDetailActivity.this,
-                        "Đang mở tính năng tìm kiếm...", Toast.LENGTH_SHORT).show();
-                aiDialog.dismiss();
-                // Add logic to handle content search
             }
         });
 

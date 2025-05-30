@@ -1,19 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="24dp"
+    android:background="#F8FAFC">
 
-    <EditText
-        android:id="@+id/editFileName"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/fileNameInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tên tài liệu" />
+        android:layout_marginBottom="16dp"
+        app:hintTextColor="#757575"
+        app:boxBackgroundColor="#FFFFFF"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/editTags"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên tài liệu"
+            android:inputType="text"
+            android:textColor="#000000"
+            android:textColorHint="#757575"
+            android:fontFamily="sans-serif" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tagsInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tags (phân cách bằng dấu phẩy)" />
+        app:hintTextColor="#757575"
+        app:boxBackgroundColor="#FFFFFF"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tags (phân cách bằng dấu phẩy)"
+            android:inputType="text"
+            android:textColor="#000000"
+            android:textColorHint="#757575"
+            android:fontFamily="sans-serif" />
+    </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>
