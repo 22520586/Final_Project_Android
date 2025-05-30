@@ -1,83 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- Phần hiển thị tag hiện tại -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tag hiện tại"
-        android:textStyle="bold"/>
-
-    <LinearLayout
-        android:id="@+id/currentTagsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="12dp"/>
-
-    <!-- Phần thêm tag mới -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thêm tag mới"/>
+    android:layout_margin="16dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <EditText
-            android:id="@+id/inputNewTag"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Nhập tag mới..."/>
-
-        <ImageButton
-            android:id="@+id/btnAddTag"
+        <!-- Phần hiển thị tag hiện tại -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_input_add"
-            android:contentDescription="Thêm tag"/>
+            android:text="Tag hiện tại"
+            android:textStyle="bold"
+            android:textColor="#0057B8"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <LinearLayout
+            android:id="@+id/currentTagsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Phần thêm tag mới -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thêm tag mới"
+            android:textColor="#0057B8"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/newTagInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:hintTextColor="#757575"
+                app:boxBackgroundColor="#FFFFFF"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputNewTag"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:fontFamily="sans-serif"
+                    android:hint="Nhập tag mới..."
+                    android:inputType="text"
+                    android:textColor="#000000"
+                    android:textColorHint="#757575" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/btnAddTag"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Thêm tag"
+                android:src="@android:drawable/ic_input_add"
+                app:tint="#00A3FF" />
+        </LinearLayout>
+
+        <!-- Phần tag phổ biến -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tag phổ biến"
+            android:textStyle="bold"
+            android:textColor="#0057B8"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <LinearLayout
+            android:id="@+id/commonTagsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Các nút điều khiển -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hủy"
+                android:minWidth="80dp"
+                android:backgroundTint="#ECEFF1"
+                android:textColor="#757575"
+                android:fontFamily="sans-serif" />
+
+            <Button
+                android:id="@+id/btnConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Xác nhận"
+                android:minWidth="80dp"
+                android:backgroundTint="#0057B8"
+                android:textColor="@android:color/white"
+                android:fontFamily="sans-serif" />
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- Phần tag phổ biến -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tag phổ biến"
-        android:textStyle="bold"
-        android:layout_marginTop="12dp"/>
-
-    <LinearLayout
-        android:id="@+id/commonTagsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Các nút điều khiển -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hủy"/>
-
-        <Button
-            android:id="@+id/btnConfirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Xác nhận"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

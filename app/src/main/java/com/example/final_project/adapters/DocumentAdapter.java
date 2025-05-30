@@ -1,14 +1,15 @@
 package com.example.final_project.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,23 +20,21 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.final_project.MainActivity;
+import com.example.final_project.R;
 import com.example.final_project.activity.DocumentDetailActivity;
 import com.example.final_project.bottom_sheet.EditDocumentBottomSheet;
-import com.example.final_project.R;
 import com.example.final_project.models.Document;
 import com.example.final_project.networks.DocumentApiServices;
 import com.example.final_project.networks.RetrofitClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
 
@@ -58,8 +57,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         View view = LayoutInflater.from(context).inflate(R.layout.item_document, parent, false);
         return new DocumentViewHolder(view);
     }
-
-
 
     @Override
     public void onBindViewHolder(@NonNull DocumentViewHolder holder, int position) {
@@ -114,7 +111,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 EditDocumentBottomSheet bottomSheet = EditDocumentBottomSheet.newInstance(
                         document.getId(),
                         document.getTitle(),
-                        new ArrayList<String>(document.getTags())
+                        new ArrayList<>(document.getTags())
                 );
                 bottomSheet.setOnDocumentUpdatedListener(updatedDoc -> {
                     documentList.set(position, updatedDoc);
@@ -122,12 +119,10 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 });
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
                 return true;
-
-        } else if (id == R.id.action_share) {
-                ShareBottomSheet bottomSheet = ShareBottomSheet.newInstance(document.getTitle(), document.getType());
+            } else if (id == R.id.action_share) {
+                ShareBottomSheet bottomSheet = ShareBottomSheet.newInstance(document.getId(), document.getTitle());
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
-
-
+                return true;
             } else if (id == R.id.action_pin) {
                 togglePinStatus(position);
                 return true;
@@ -140,41 +135,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
         popup.show();
     }
-
-    private void shareDocument(Document document) {
-        Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.setType("text/plain");
-
-        String shareContent = "Tiêu đề: " + document.getTitle() + "\nLoại: " + document.getType();
-        sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Chia sẻ tài liệu");
-
-        // Tạo danh sách app chia sẻ (loại trừ Bluetooth)
-        Intent chooser = Intent.createChooser(sendIntent, "Chia sẻ tài liệu");
-
-        // Optional: chặn app Bluetooth nếu muốn lọc
-        List<Intent> targetIntents = new ArrayList<>();
-        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(sendIntent, 0);
-        for (ResolveInfo resInfo : resInfoList) {
-            String packageName = resInfo.activityInfo.packageName;
-            if (!packageName.toLowerCase().contains("bluetooth")) {
-                Intent targetedIntent = new Intent(Intent.ACTION_SEND);
-                targetedIntent.setType("text/plain");
-                targetedIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-                targetedIntent.setPackage(packageName);
-                targetIntents.add(targetedIntent);
-            }
-        }
-
-        if (!targetIntents.isEmpty()) {
-            Intent finalChooser = Intent.createChooser(targetIntents.remove(0), "Chia sẻ tài liệu");
-            finalChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[0]));
-            context.startActivity(finalChooser);
-        } else {
-            Toast.makeText(context, "Không tìm thấy ứng dụng chia sẻ phù hợp.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     private void showDeleteConfirmation(int position) {
         Document document = documentList.get(position);
@@ -229,11 +189,9 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     Toast.makeText(context, "Đã xóa tài liệu", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Toast.makeText(context, "Lỗi khi xóa tài liệu", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -244,7 +202,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             }
         });
     }
-
 
     public void showPinnedDocuments() {
         showingPinned = true;
@@ -285,14 +242,14 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     public static class ShareBottomSheet extends BottomSheetDialogFragment {
 
+        private String documentId;
         private String title;
-        private String type;
 
-        public static ShareBottomSheet newInstance(String title, String type) {
+        public static ShareBottomSheet newInstance(String documentId, String title) {
             ShareBottomSheet fragment = new ShareBottomSheet();
             Bundle args = new Bundle();
+            args.putString("documentId", documentId);
             args.putString("title", title);
-            args.putString("type", type);
             fragment.setArguments(args);
             return fragment;
         }
@@ -307,28 +264,33 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             View view = inflater.inflate(R.layout.bottom_sheet_share, container, false);
 
             if (getArguments() != null) {
+                documentId = getArguments().getString("documentId");
                 title = getArguments().getString("title");
-                type = getArguments().getString("type");
             }
 
             TextView shareTitle = view.findViewById(R.id.shareTitle);
             TextView shareSubtitle = view.findViewById(R.id.shareSubtitle);
+            Button btnCreateLink = view.findViewById(R.id.btnCreateLink);
+            Button btnCancel = view.findViewById(R.id.btnCancel);
 
             shareTitle.setText("Chia sẻ tài liệu");
-            shareSubtitle.setText(title + " (" + type + ")");
+            shareSubtitle.setText(title);
 
-            view.findViewById(R.id.btnEmail).setOnClickListener(v -> shareVia("email"));
-            view.findViewById(R.id.btnSms).setOnClickListener(v -> shareVia("sms"));
-            view.findViewById(R.id.btnDrive).setOnClickListener(v -> shareVia("drive"));
-            view.findViewById(R.id.btnLink).setOnClickListener(v -> shareVia("link"));
-            view.findViewById(R.id.btnMore).setOnClickListener(v -> shareVia("more"));
+            btnCreateLink.setOnClickListener(v -> {
+                // Tạo liên kết placeholder (sẽ thay bằng API sau)
+                String shareUrl = "https://example.com/document/" + documentId;
+                ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Share Link", shareUrl);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "Liên kết đã được sao chép", Toast.LENGTH_SHORT).show();
+                dismiss();
+            });
+
+            btnCancel.setOnClickListener(v -> {
+                dismiss();
+            });
 
             return view;
-        }
-
-        private void shareVia(String method) {
-            Toast.makeText(getContext(), "Chia sẻ qua: " + method, Toast.LENGTH_SHORT).show();
-            dismiss();
         }
     }
 }
