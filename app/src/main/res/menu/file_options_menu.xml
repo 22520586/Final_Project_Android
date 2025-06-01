@@ -4,6 +4,9 @@
         android:id="@+id/action_open"
         android:title="Mở" />
     <item
+        android:id="@+id/action_add_to_folder"
+        android:title="Thêm vào thư mục" />
+    <item
         android:id="@+id/action_edit"
         android:title="Chỉnh sửa" />
     <item

@@ -12,6 +12,7 @@ public class RetrofitClient {
     private static DocumentApiServices documentApiServices;
     private static UserApiService userApiService;
     private static BotApiServices botApiServices;
+    private static FolderApiServices folderApiServices;
 
     private static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
@@ -46,6 +47,13 @@ public class RetrofitClient {
             botApiServices = getRetrofit(context).create(BotApiServices.class);
         }
         return botApiServices;
+    }
+
+    public static FolderApiServices getFolderApiService(Context context) {
+        if (folderApiServices == null) {
+            folderApiServices = getRetrofit(context).create(FolderApiServices.class);
+        }
+        return folderApiServices;
     }
 
 }
