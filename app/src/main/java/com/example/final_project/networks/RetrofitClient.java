@@ -13,6 +13,8 @@ public class RetrofitClient {
     private static UserApiService userApiService;
     private static BotApiServices botApiServices;
     private static FolderApiServices folderApiServices;
+    private static ConfigApiServices configApiServices;
+    private static TagApiServices tagApiServices;
 
     private static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
@@ -54,6 +56,20 @@ public class RetrofitClient {
             folderApiServices = getRetrofit(context).create(FolderApiServices.class);
         }
         return folderApiServices;
+
+    public static ConfigApiServices getConfigApiService(Context context) {
+        if (configApiServices == null) {
+            configApiServices = getRetrofit(context).create(ConfigApiServices.class);
+        }
+        return configApiServices;
+    }
+
+    public static TagApiServices getTagApiService(Context context) {
+        if (tagApiServices == null) {
+            tagApiServices = getRetrofit(context).create(TagApiServices.class);
+        }
+        return tagApiServices;
+
     }
 
 }

@@ -1,5 +1,8 @@
 package com.example.final_project.helpers;
 
+
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 
 import com.example.final_project.MainActivity;
 import com.example.final_project.R;
+
+import com.example.final_project.models.User;
 import com.example.final_project.activity.LoginActivity;
 import com.example.final_project.networks.RetrofitClient;
 import com.example.final_project.networks.UserApiService;
@@ -24,6 +29,7 @@ import com.example.final_project.networks.UserApiService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class UserProfileDialogHelper {
 
@@ -39,9 +45,11 @@ public class UserProfileDialogHelper {
     private String phone = "0912345678";
     private String email = "nguyenvana@email.com";
     private String username = "nguyenvana";
+    private User user;
 
-    public UserProfileDialogHelper(MainActivity activity) {
+    public UserProfileDialogHelper(MainActivity activity, User user) {
         this.activity = activity;
+        this.user = user;
     }
 
     public void showUserProfileDialog() {
@@ -49,7 +57,6 @@ public class UserProfileDialogHelper {
         userProfileDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         userProfileDialog.setContentView(R.layout.dialog_user_profile);
         userProfileDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         // Initialize views
         TextView tvUserName = userProfileDialog.findViewById(R.id.tv_user_name);
         TextView tvUserEmail = userProfileDialog.findViewById(R.id.tv_user_email);
@@ -57,9 +64,13 @@ public class UserProfileDialogHelper {
         Button btnLogout = userProfileDialog.findViewById(R.id.btn_logout);
         ImageButton btnClose = userProfileDialog.findViewById(R.id.btn_close);
 
-        // Set user data
-        tvUserName.setText(fullName);
-        tvUserEmail.setText(email);
+        if (user == null) {
+            tvUserName.setText("Khách");
+            tvUserEmail.setText("Không có email");
+        } else {
+            tvUserName.setText(user.getName());
+            tvUserEmail.setText(user.getEmail());
+        }
 
         // Set click listeners
         btnEditProfile.setOnClickListener(new View.OnClickListener() {

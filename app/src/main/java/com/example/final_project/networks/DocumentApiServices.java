@@ -2,6 +2,7 @@ package com.example.final_project.networks;
 
 import com.example.final_project.models.Document;
 import com.example.final_project.requests.UpdateRequest;
+import com.google.gson.JsonObject;
 import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -27,6 +28,9 @@ public interface DocumentApiServices {
     @GET("document/{id}")
     Call<Document> getDocumentById(@Path("id") String id); // Changed to String
 
+    @GET("document/extract/{id}")
+    Call<JsonObject> extractText(@Path("id") String documentId);
+
     @GET("document/get-pinned-docs")
     Call<List<Document>> getPinnedDocuments();
 
@@ -38,7 +42,7 @@ public interface DocumentApiServices {
             @Part("tags") RequestBody tags);
 
     @POST("document/toggle-pin/{id}")
-    Call<Document> togglePin(@Path("id") String documentId); // Changed to String
+    Call<Document> togglePin(@Path("id") String documentId);
 
     @DELETE("document/{id}")
     Call<ResponseBody> deleteDocument(@Path("id") String documentId);

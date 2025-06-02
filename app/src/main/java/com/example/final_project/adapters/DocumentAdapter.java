@@ -345,7 +345,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 break;
             }
         }
-
         Call<Document> call = apiServices.togglePin(document.getId());
         call.enqueue(new Callback<Document>() {
             @Override
@@ -393,6 +392,24 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 Log.e(TAG, "Toggle pin failed: " + t.getMessage(), t);
                 Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 notifyItemChanged(position);
+            }
+        });
+    }
+
+    private void togglePin(String id) {
+        Call<Document> call = apiServices.togglePin(id);
+        call.enqueue(new Callback<Document>() {
+            @Override
+            public void onResponse(Call<Document> call, Response<Document> response) {
+                if(response.isSuccessful())
+                {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Document> call, Throwable t) {
+                Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

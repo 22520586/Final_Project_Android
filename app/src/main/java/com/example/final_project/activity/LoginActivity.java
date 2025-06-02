@@ -145,8 +145,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         editor.apply();
+                        SharedPreferences userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor userEditor = userPrefs.edit();
+                        userEditor.putString("name", loggedUser.getName());
+                        userEditor.putString("email", loggedUser.getEmail());
+                        userEditor.apply();
                         Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                        // Chuyển sang MainActivity sau khi đăng nhập thành công
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("user", loggedUser);
                         startActivity(intent);
                         finish();
                     } catch (Exception ex) {

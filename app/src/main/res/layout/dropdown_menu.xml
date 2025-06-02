@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#F8FAFC"
     android:padding="24dp">
 
-    <!-- Header with title and close button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,132 +24,114 @@
             app:tint="#0057B8" />
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Tùy chọn"
-            android:textColor="#0057B8"
-            android:textSize="20sp"
+            android:text="Kiểu tài liệu"
             android:textStyle="bold"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center" />
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:layout_marginBottom="12dp" />
 
-        <View
-            android:layout_width="24dp"
-            android:layout_height="24dp" />
-    </LinearLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFileTypes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:selectionRequired="false">
 
-    <!-- File Type Section -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kiểu tài liệu"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginBottom="16dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPdf"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PDF"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="#F44336" />
 
-    <!-- First row - PDF, DOC -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDocx"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOCX"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="#1976D2"/>
 
-        <!-- PDF button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_pdf"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="PDF"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#D32F2F"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginEnd="8dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipTxt"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TXT"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="#7B1FA2"
+                app:chipStrokeWidth="1dp" />
 
-        <!-- DOC button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_doc"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="DOCX"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#1976D2"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipXlsx"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="XLSX"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:chipBackgroundColor="#388E3C"/>
 
-    <!-- Second row - TXT, XLS -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="12dp">
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPptx"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="PPTX"
+                android:textColor="@color/white"
+                app:chipBackgroundColor="#E65100"/>
 
-        <!-- TXT button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_txt"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="TXT"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#7B1FA2"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginEnd="8dp" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipZip"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ZIP"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                app:chipBackgroundColor="#455A64" />
 
-        <!-- XLS button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_xls"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="XLSX"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#388E3C"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
+        </com.google.android.material.chip.ChipGroup>
 
-    <!-- Third row - PPT, ZIP -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Thẻ"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#000000"/>
 
-        <!-- PPT button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_ppt"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="PPTX"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#F57C00"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginEnd="8dp" />
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:selectionRequired="false" />
 
-        <!-- ZIP button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_zip"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="ZIP"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#455A64"
-            android:textSize="14sp"
-            app:cornerRadius="8dp"
-            android:layout_marginStart="8dp" />
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm kiếm"
+            android:layout_gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:layout_marginTop="20dp"/>
+
     </LinearLayout>
 
     <!-- Separator line -->
@@ -163,14 +145,14 @@
     <LinearLayout
         android:id="@+id/settingsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:layout_height="48dp"
         android:layout_marginBottom="16dp"
         android:paddingVertical="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="30dp"
