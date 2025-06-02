@@ -2,6 +2,7 @@ package com.example.final_project.bottom_sheet;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,7 @@ public class EditDocumentBottomSheet extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.layout_edit_document, container, false);
 
         String documentId = getArguments().getString("id");
+
         EditText titleEdit = view.findViewById(R.id.editTitle);
         EditText descEdit = view.findViewById(R.id.editDescription);
         Button btnSave = view.findViewById(R.id.btnSave);
@@ -124,6 +126,7 @@ public class EditDocumentBottomSheet extends BottomSheetDialogFragment {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     if(isAdded()) {
+                        Log.d("Lỗi kết nối 2: ", t.getMessage());
                         Toast.makeText(requireContext(), "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }

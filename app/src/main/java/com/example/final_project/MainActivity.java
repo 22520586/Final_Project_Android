@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.final_project.activity.FolderActivity;
+import com.example.final_project.activity.LoginActivity;
 import com.example.final_project.activity.SettingActivity;
 import com.example.final_project.adapters.DocumentAdapter;
 import com.example.final_project.helpers.AddDocumentDialogHelper;
@@ -36,6 +37,7 @@ import com.example.final_project.helpers.DropdownMenuHelper;
 import com.example.final_project.helpers.UserProfileDialogHelper;
 import com.example.final_project.managers.DocumentManager;
 import com.example.final_project.models.Document;
+import com.example.final_project.models.User;
 import com.example.final_project.networks.DocumentApiServices;
 import com.example.final_project.networks.RetrofitClient;
 import com.example.final_project.utils.FileUtils;
@@ -87,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
         searchEditText = findViewById(R.id.searchEditText);
         // Khởi tạo các view
         initializeViews();
-
+        Intent intent = getIntent();
+        User user = (User) getIntent().getSerializableExtra("user");
+        intent.putExtra("user", user);
         // Khởi tạo các helper
         documentManager = new DocumentManager(this);
         dialogHelper = new AddDocumentDialogHelper(this);
         dropdownMenuHelper = new DropdownMenuHelper(this);
-        userProfileDialogHelper = new UserProfileDialogHelper(this);
+        userProfileDialogHelper = new UserProfileDialogHelper(this, user);
 
         // Thiết lập RecyclerView
         setupRecyclerView();
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         setupButtonListeners();
 
         // Thiết lập BottomNavigationView
-        setupBottomNavigation();
+        setupBottomNavigation(user);
 
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -259,20 +263,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void setupBottomNavigation() {
+    private void setupBottomNavigation(User user) {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
                 // Đã ở MainActivity (Trang chủ), không cần làm gì
                 return true;
             } else if (item.getItemId() == R.id.nav_folder) {
-                // Chuyển sang FolderActivity
-                startActivity(new Intent(MainActivity.this, FolderActivity.class));
-                finish();
+                Intent intent = new Intent(MainActivity.this, FolderActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+               // finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
-                // Chuyển sang SettingActivity
-                startActivity(new Intent(MainActivity.this, SettingActivity.class));
-                finish();
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
                 return true;
             }
             return false;
@@ -375,7 +380,4 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void logout() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-    }
 }

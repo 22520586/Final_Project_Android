@@ -1,71 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- Top toolbar -->
-    <RelativeLayout
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blue_primary"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="16dp">
-
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back" />
-
-        <TextView
-            android:id="@+id/documentTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Báo cáo tài chính Q2"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-    </RelativeLayout>
-
-    <!-- Document content -->
-    <WebView
-        android:id="@+id/webView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:layout_above="@id/bottomNavigation" />
+        android:orientation="vertical">
 
-<!--    &lt;!&ndash; Thanh điều hướng dưới cùng &ndash;&gt;-->
-<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--        android:id="@+id/bottomNavigation"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:background="@android:color/white"-->
-<!--        android:elevation="8dp"-->
-<!--        app:itemIconTint="@color/bottom_nav_colors"-->
-<!--        app:itemTextColor="@color/bottom_nav_colors"-->
-<!--        app:menu="@menu/bottom_navigation_menu" />-->
+        <!-- Top toolbar -->
+        <RelativeLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_primary"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp">
 
-    <!-- FAB for AI assistance -->
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back" />
+
+            <TextView
+                android:id="@+id/documentTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Báo cáo tài chính Q2"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <!-- Document content -->
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_below="@id/toolbar"
+            android:layout_above="@id/seekBarContainer" />
+
+    </LinearLayout>
+
+    <!-- SeekBar Container at bottom -->
+    <LinearLayout
+        android:id="@+id/seekBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/seekBarLabel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/btnplay"
+            android:scaleType="centerCrop"
+            android:background="@color/white"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="0"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:minWidth="40dp"
+            android:gravity="end" />
+
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/aiButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/seekBarContainer"
         android:layout_margin="16dp"
         android:src="@drawable/ic_ai"
         app:backgroundTint="@color/blue_primary"
         android:contentDescription="AI Assistant" />
+
 </RelativeLayout>
