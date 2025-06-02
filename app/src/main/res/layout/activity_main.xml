@@ -100,7 +100,7 @@
                     android:inputType="text"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#333333"
                     android:textColorHint="#757575" />
             </com.google.android.material.textfield.TextInputLayout>
 
