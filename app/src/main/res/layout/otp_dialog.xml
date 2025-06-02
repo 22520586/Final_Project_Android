@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/otpDialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:layout_constraintWidth_max="400dp"
+    app:layout_constraintWidth_percent="0.9"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:id="@+id/otpTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xác Nhận OTP"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#0057B8"
+            android:fontFamily="sans-serif-medium"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/otpSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nhập mã OTP được gửi đến email của bạn"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:ellipsize="end"
+            android:maxLines="2" />
+
+        <!-- OTP Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/otpInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="#757575"
+            app:boxBackgroundColor="#FFFFFF"
+            app:errorEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/otpEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Mã OTP"
+                android:inputType="number"
+                android:maxLength="6"
+                android:padding="12dp"
+                android:textColor="#333333"
+                android:textColorHint="#757575"
+                android:fontFamily="sans-serif" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Gửi lại OTP -->
+        <TextView
+            android:id="@+id/resendOtpLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Không nhận được OTP? Gửi lại"
+            android:textSize="14sp"
+            android:textColor="#00A3FF"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:onClick="onResendOtpClicked" />
+
+        <!-- Nút xác nhận và hủy -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <Button
+                android:id="@+id/btnCancelOtp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="120dp"
+                android:paddingVertical="12dp"
+                android:text="Hủy"
+                android:textSize="16sp"
+                android:textColor="#757575"
+                android:backgroundTint="#ECEFF1"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="12dp" />
+
+            <Button
+                android:id="@+id/btnConfirmOtp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="120dp"
+                android:paddingVertical="12dp"
+                android:text="Xác Nhận"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#0057B8"
+                android:fontFamily="sans-serif"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
