@@ -1,145 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/bg_share_popup"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shareOptions"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/shareOptions">
+    android:layout_margin="16dp"
+    app:layout_constraintWidth_max="400dp"
+    app:layout_constraintWidth_percent="0.9"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <!-- Tiêu đề -->
-    <TextView
-        android:id="@+id/shareTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chia sẻ tài liệu"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:id="@+id/shareSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tên tài liệu"
-        android:textSize="14sp"
-        android:textColor="#888888"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center_horizontal" />
-
-    <!-- Các tuỳ chọn chia sẻ -->
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="3"
-        android:alignmentMode="alignMargins"
-        android:rowOrderPreserved="false"
-        android:useDefaultMargins="true">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <!-- Mẫu cho mỗi nút chia sẻ -->
-        <LinearLayout
-            android:id="@+id/btnEmail"
-            android:orientation="vertical"
-            android:layout_width="0dp"
+        <!-- Tiêu đề -->
+        <TextView
+            android:id="@+id/shareTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackground">
+            android:text="Chia sẻ tài liệu"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#0057B8"
+            android:fontFamily="sans-serif-medium"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_email" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnSms"
-            android:orientation="vertical"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/shareSubtitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackground">
+            android:text="Tên tài liệu"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:fontFamily="sans-serif"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_sms" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tin nhắn"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnDrive"
-            android:orientation="vertical"
-            android:layout_width="0dp"
+        <!-- Nút tạo liên kết -->
+        <Button
+            android:id="@+id/btnCreateLink"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackground">
+            android:text="Tạo liên kết"
+            android:textSize="16sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#0057B8"
+            android:fontFamily="sans-serif"
+            android:paddingVertical="12dp"
+            android:layout_marginBottom="16dp" />
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_drive" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Google Drive"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnLink"
-            android:orientation="vertical"
-            android:layout_width="0dp"
+        <!-- Nút hủy -->
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackground">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_link" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tạo liên kết"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnMore"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:gravity="center"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackground">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_more" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thêm"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </GridLayout>
-</LinearLayout>
+            android:text="Hủy"
+            android:textSize="16sp"
+            android:textColor="#757575"
+            android:backgroundTint="#ECEFF1"
+            android:fontFamily="sans-serif"
+            android:paddingVertical="12dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

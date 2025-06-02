@@ -148,7 +148,6 @@ public class DocumentDetailActivity extends AppCompatActivity {
         // Get views
         ImageButton closeButton = aiDialog.findViewById(R.id.btn_close_dialog);
         View summarizeLayout = aiDialog.findViewById(R.id.layout_summarize);
-        View searchLayout = aiDialog.findViewById(R.id.layout_search);
         View textToSpeechLayout = aiDialog.findViewById(R.id.layout_text_to_speech);
         View questionsLayout = aiDialog.findViewById(R.id.layout_questions);
 

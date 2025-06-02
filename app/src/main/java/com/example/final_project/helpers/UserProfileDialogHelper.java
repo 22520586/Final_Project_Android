@@ -107,7 +107,6 @@ public class UserProfileDialogHelper {
         // Initialize views
         ImageButton btnClose = editProfileDialog.findViewById(R.id.btn_close_edit);
         EditText etFullName = editProfileDialog.findViewById(R.id.et_fullname);
-        Spinner spinnerGender = editProfileDialog.findViewById(R.id.spinner_gender);
         EditText etPhone = editProfileDialog.findViewById(R.id.et_phone);
         EditText etEmail = editProfileDialog.findViewById(R.id.et_email);
         EditText etUsername = editProfileDialog.findViewById(R.id.et_username);
@@ -121,11 +120,9 @@ public class UserProfileDialogHelper {
                 android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGender.setAdapter(adapter);
 
         // Select the current gender
         int position = adapter.getPosition(gender);
-        spinnerGender.setSelection(position);
 
         // Set current data
         etFullName.setText(fullName);
@@ -147,7 +144,6 @@ public class UserProfileDialogHelper {
             public void onClick(View v) {
                 // Save the changes
                 fullName = etFullName.getText().toString();
-                gender = spinnerGender.getSelectedItem().toString();
                 phone = etPhone.getText().toString();
                 email = etEmail.getText().toString();
                 username = etUsername.getText().toString();

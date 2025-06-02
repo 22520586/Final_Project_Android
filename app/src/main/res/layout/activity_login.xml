@@ -1,67 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:padding="24dp"
+    android:background="#F8FAFC">
 
+    <!-- Tiêu đề -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Đăng Nhập"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="#333333" />
+        android:textColor="#0057B8"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="24dp" />
 
-    <EditText
-        android:id="@+id/emailEditText"
+    <!-- Email Input -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:layout_marginTop="20dp"
-        android:padding="10dp"
-        android:background="@drawable/edittext_border" />
+        android:layout_marginTop="16dp"
+        app:errorEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <EditText
-        android:id="@+id/passwordEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:textColor="#333333"
+            android:textColorHint="#757575" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Password Input -->
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mật khẩu"
-        android:inputType="textPassword"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:background="@drawable/edittext_border" />
+        android:layout_marginTop="16dp"
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <CheckBox
-        android:id="@+id/rememberMeCheckBox"
-        android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mật khẩu"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:textColor="#333333"
+            android:textColorHint="#757575" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Remember Me Checkbox and Forgot Password -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ghi nhớ đăng nhập"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="start"
-        android:textColor="#333333"
-        android:padding="5dp" />
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical">
 
-    <Button
+        <CheckBox
+            android:id="@+id/rememberMeCheckBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ghi nhớ đăng nhập"
+            android:textColor="#333333"
+            android:padding="5dp" />
+    </LinearLayout>
+
+    <!-- Login Button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:text="Đăng Nhập"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="#6200EE"
+        android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:padding="10dp" />
+        android:layout_marginTop="24dp"
+        app:cornerRadius="8dp"
+        app:backgroundTint="#0057B8"
+        android:elevation="4dp" />
 
+    <!-- Sign Up Link -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chưa có tài khoản? Đăng ký"
-        android:layout_marginTop="10dp"
-        android:textColor="#6200EE"
+        android:layout_marginTop="16dp"
+        android:textColor="#00A3FF"
+        android:textSize="14sp"
         android:onClick="goToSignUp"
-        android:padding="5dp"
+        android:padding="8dp"
         android:background="?android:attr/selectableItemBackground" />
+
 </LinearLayout>

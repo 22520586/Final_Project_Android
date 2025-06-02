@@ -1,56 +1,73 @@
 package com.example.final_project.adapters;
-
+import com.example.final_project.requests.AddToFolderRequest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.example.final_project.MainActivity;
+import com.example.final_project.R;
 import com.example.final_project.activity.DocumentDetailActivity;
 import com.example.final_project.bottom_sheet.EditDocumentBottomSheet;
-import com.example.final_project.R;
+import com.example.final_project.models.ApiResponse;
 import com.example.final_project.models.Document;
+import com.example.final_project.models.Folder;
 import com.example.final_project.networks.DocumentApiServices;
+import com.example.final_project.networks.FolderApiServices;
 import com.example.final_project.networks.RetrofitClient;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.gson.Gson;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
 
-    private Context context;
-    private List<Document> documentList;
-    private List<Document> allDocuments;  // Lưu danh sách đầy đủ
+    private static final String TAG = "DocumentAdapter";
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final Context context;
+    private final List<Document> documentList;
+    private final List<Document> allDocuments;
     private boolean showingPinned = false;
+    private final DocumentApiServices apiServices;
+    private final FolderApiServices folderApiServices;
 
     public DocumentAdapter(Context context, List<Document> documentList) {
         this.context = context;
         this.documentList = documentList;
-        this.allDocuments = new ArrayList<>(documentList);  // Tạo bản sao
+        this.allDocuments = new ArrayList<>(documentList);
+        this.apiServices = RetrofitClient.getDocumentApiService(context);
+        this.folderApiServices = RetrofitClient.getFolderApiService(context);
     }
-
-    private DocumentApiServices apiServices = RetrofitClient.getDocumentApiService(context);
 
     @NonNull
     @Override
@@ -59,12 +76,10 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         return new DocumentViewHolder(view);
     }
 
-
-
     @Override
     public void onBindViewHolder(@NonNull DocumentViewHolder holder, int position) {
         Document document = documentList.get(position);
-        String type = "";
+        String type;
         switch (document.getType()) {
             case "application/pdf":
                 type = "PDF";
@@ -82,19 +97,27 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         holder.typeText.setText(type);
         holder.titleText.setText(document.getTitle());
 
-        if (document.isPinned()) {
-            holder.pinnedIcon.setVisibility(View.VISIBLE);
+        // Format the timestamp for display
+        String timestamp = document.getUpdatedAt() != null ? document.getUpdatedAt() : document.getCreatedAt();
+        if (timestamp != null) {
+            try {
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+                isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                SimpleDateFormat displayFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
+                displayFormat.setTimeZone(TimeZone.getDefault());
+                Date date = isoFormat.parse(timestamp);
+                holder.dateText.setText(displayFormat.format(date));
+            } catch (ParseException e) {
+                holder.dateText.setText(timestamp);
+            }
         } else {
-            holder.pinnedIcon.setVisibility(View.GONE);
+            holder.dateText.setText("N/A");
         }
 
-        holder.moreButton.setOnClickListener(v -> {
-            showPopupMenu(v, position);
-        });
+        holder.pinnedIcon.setVisibility(document.isPinned() ? View.VISIBLE : View.GONE);
 
-        holder.itemView.setOnClickListener(v -> {
-            openDocumentDetail(document);
-        });
+        holder.moreButton.setOnClickListener(v -> showPopupMenu(v, position));
+        holder.itemView.setOnClickListener(v -> openDocumentDetail(document));
     }
 
     private void showPopupMenu(View view, int position) {
@@ -114,7 +137,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 EditDocumentBottomSheet bottomSheet = EditDocumentBottomSheet.newInstance(
                         document.getId(),
                         document.getTitle(),
-                        new ArrayList<String>(document.getTags())
+                        new ArrayList<>(document.getTags())
                 );
                 bottomSheet.setOnDocumentUpdatedListener(updatedDoc -> {
                     documentList.set(position, updatedDoc);
@@ -122,17 +145,18 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
                 });
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
                 return true;
-
-        } else if (id == R.id.action_share) {
-                ShareBottomSheet bottomSheet = ShareBottomSheet.newInstance(document.getTitle(), document.getType());
+            } else if (id == R.id.action_share) {
+                ShareBottomSheet bottomSheet = ShareBottomSheet.newInstance(document.getId(), document.getTitle());
                 bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
-
-
+                return true;
             } else if (id == R.id.action_pin) {
                 togglePinStatus(position);
                 return true;
             } else if (id == R.id.action_delete) {
                 showDeleteConfirmation(position);
+                return true;
+            } else if (id == R.id.action_add_to_folder) {
+                validateAndAddToFolder(document.getId());
                 return true;
             }
             return false;
@@ -141,44 +165,149 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         popup.show();
     }
 
-    private void shareDocument(Document document) {
-        Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.setType("text/plain");
+    private void validateAndAddToFolder(String documentId) {
+        AlertDialog loadingDialog = new AlertDialog.Builder(context)
+                .setMessage("Đang kiểm tra tài liệu...")
+                .setCancelable(false)
+                .create();
+        loadingDialog.show();
 
-        String shareContent = "Tiêu đề: " + document.getTitle() + "\nLoại: " + document.getType();
-        sendIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Chia sẻ tài liệu");
-
-        // Tạo danh sách app chia sẻ (loại trừ Bluetooth)
-        Intent chooser = Intent.createChooser(sendIntent, "Chia sẻ tài liệu");
-
-        // Optional: chặn app Bluetooth nếu muốn lọc
-        List<Intent> targetIntents = new ArrayList<>();
-        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(sendIntent, 0);
-        for (ResolveInfo resInfo : resInfoList) {
-            String packageName = resInfo.activityInfo.packageName;
-            if (!packageName.toLowerCase().contains("bluetooth")) {
-                Intent targetedIntent = new Intent(Intent.ACTION_SEND);
-                targetedIntent.setType("text/plain");
-                targetedIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-                targetedIntent.setPackage(packageName);
-                targetIntents.add(targetedIntent);
+        Call<Document> validateDocCall = apiServices.getDocumentById(documentId);
+        validateDocCall.enqueue(new Callback<Document>() {
+            @Override
+            public void onResponse(Call<Document> call, Response<Document> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    showFolderSelectionDialog(documentId, loadingDialog);
+                } else {
+                    loadingDialog.dismiss();
+                    String errorMsg = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing validateDoc errorBody", e);
+                        }
+                    }
+                    Log.e(TAG, "Validate document error: " + errorMsg);
+                    Toast.makeText(context, "Tài liệu không tồn tại: " + errorMsg, Toast.LENGTH_SHORT).show();
+                }
             }
-        }
 
-        if (!targetIntents.isEmpty()) {
-            Intent finalChooser = Intent.createChooser(targetIntents.remove(0), "Chia sẻ tài liệu");
-            finalChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toArray(new Parcelable[0]));
-            context.startActivity(finalChooser);
-        } else {
-            Toast.makeText(context, "Không tìm thấy ứng dụng chia sẻ phù hợp.", Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onFailure(Call<Document> call, Throwable t) {
+                loadingDialog.dismiss();
+                Log.e(TAG, "Validate document failed: " + t.getMessage(), t);
+                Toast.makeText(context, "Lỗi kiểm tra tài liệu: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    private void showFolderSelectionDialog(String documentId, AlertDialog loadingDialog) {
+        loadingDialog.setMessage("Đang tải danh sách thư mục...");
+        Call<ApiResponse<List<Folder>>> call = folderApiServices.getFoldersByUserId();
+        call.enqueue(new Callback<ApiResponse<List<Folder>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Folder>>> call, Response<ApiResponse<List<Folder>>> response) {
+                loadingDialog.dismiss();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Folder> folders = response.body().getData();
+                    if (folders != null && !folders.isEmpty()) {
+                        String[] folderNames = folders.stream().map(Folder::getName).toArray(String[]::new);
+                        String[] folderIds = folders.stream().map(Folder::getId).toArray(String[]::new);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Chọn thư mục");
+                        builder.setItems(folderNames, (dialog, which) -> {
+                            String selectedFolderId = folderIds[which];
+                            addDocumentToFolder(documentId, selectedFolderId);
+                        });
+                        builder.setNegativeButton("Hủy", null);
+                        builder.show();
+                    } else {
+                        new AlertDialog.Builder(context)
+                                .setTitle("Không có thư mục")
+                                .setMessage("Bạn chưa có thư mục nào. Tạo thư mục mới?")
+                                .setPositiveButton("Tạo", (dialog, which) -> {
+                                    Toast.makeText(context, "Chức năng tạo thư mục chưa được triển khai", Toast.LENGTH_SHORT).show();
+                                })
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
+                } else {
+                    String errorMsg = response.body() != null ? response.body().getMessage() : "Lỗi khi tải danh sách thư mục: " + response.message();
+                    Log.e(TAG, "Error fetching folders: " + errorMsg);
+                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Folder>>> call, Throwable t) {
+                loadingDialog.dismiss();
+                Log.e(TAG, "Failed to fetch folders: " + t.getMessage(), t);
+                Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addDocumentToFolder(String documentId, String folderId) {
+        if (folderId == null || folderId.isEmpty()) {
+            Toast.makeText(context, "ID thư mục không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Gson gson = new Gson();
+        AddToFolderRequest request = new AddToFolderRequest(folderId);
+        String json = gson.toJson(request);
+        Log.d(TAG, "Adding document " + documentId + " to folder " + folderId + " with request: " + json);
+        RequestBody requestBody = RequestBody.create(JSON, json);
+
+        AlertDialog loadingDialog = new AlertDialog.Builder(context)
+                .setMessage("Đang thêm tài liệu vào thư mục...")
+                .setCancelable(false)
+                .create();
+        loadingDialog.show();
+
+        Call<Document> call = apiServices.addDocumentToFolder(documentId, requestBody);
+        call.enqueue(new Callback<Document>() {
+            @Override
+            public void onResponse(Call<Document> call, Response<Document> response) {
+                loadingDialog.dismiss();
+                Log.d(TAG, "addDocumentToFolder response code: " + response.code());
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(context, "Đã thêm tài liệu vào thư mục", Toast.LENGTH_SHORT).show();
+                } else {
+                    String errorMsg = response.message();
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "Error body: " + errorBody);
+                            Gson gson = new Gson();
+                            ApiResponse<?> errorResponse = gson.fromJson(errorBody, ApiResponse.class);
+                            errorMsg = errorResponse.getMessage() != null ? errorResponse.getMessage() : errorBody;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing errorBody", e);
+                    }
+                    Log.e(TAG, "Add to folder error: " + errorMsg);
+                    if (errorMsg.contains("Error moving document")) {
+                        Toast.makeText(context, "Lỗi: Không thể di chuyển tài liệu. Vui lòng kiểm tra lại thư mục.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context, "Lỗi: " + errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Document> call, Throwable t) {
+                loadingDialog.dismiss();
+                Log.e(TAG, "addDocumentToFolder failed for document " + documentId + ": " + t.getMessage(), t);
+                Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     private void showDeleteConfirmation(int position) {
         Document document = documentList.get(position);
-
         new AlertDialog.Builder(context)
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc chắn muốn xóa tài liệu '" + document.getTitle() + "' không?")
@@ -206,15 +335,65 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     private void togglePinStatus(int position) {
         Document document = documentList.get(position);
-        String documentId = document.getId();
-        togglePin(documentId);
+        boolean newPinnedStatus = !document.isPinned();
+        document.setPinned(newPinnedStatus);
 
-        Toast.makeText(context,
-                document.isPinned() ? "Đã ghim: " + document.getTitle()
-                        : "Đã bỏ ghim: " + document.getTitle(),
-                Toast.LENGTH_SHORT).show();
+        for (Document doc : allDocuments) {
+            if (doc.getTitle().equals(document.getTitle()) &&
+                    doc.getType().equals(document.getType())) {
+                doc.setPinned(newPinnedStatus);
+                break;
+            }
+        }
+        Call<Document> call = apiServices.togglePin(document.getId());
+        call.enqueue(new Callback<Document>() {
+            @Override
+            public void onResponse(Call<Document> call, Response<Document> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(context,
+                            newPinnedStatus ? "Đã ghim: " + document.getTitle() : "Đã bỏ ghim: " + document.getTitle(),
+                            Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(position);
+                } else {
+                    // Revert the pin status if the API call fails
+                    document.setPinned(!newPinnedStatus);
+                    for (Document doc : allDocuments) {
+                        if (doc.getTitle().equals(document.getTitle()) &&
+                                doc.getType().equals(document.getType())) {
+                            doc.setPinned(!newPinnedStatus);
+                            break;
+                        }
+                    }
+                    String errorMsg = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing togglePin errorBody", e);
+                        }
+                    }
+                    Log.e(TAG, "Toggle pin error: " + errorMsg);
+                    Toast.makeText(context, "Lỗi khi cập nhật trạng thái ghim: " + errorMsg, Toast.LENGTH_SHORT).show();
+                    notifyItemChanged(position);
+                }
+            }
 
-        notifyItemChanged(position);
+            @Override
+            public void onFailure(Call<Document> call, Throwable t) {
+                // Revert the pin status if the API call fails
+                document.setPinned(!newPinnedStatus);
+                for (Document doc : allDocuments) {
+                    if (doc.getTitle().equals(document.getTitle()) &&
+                            doc.getType().equals(document.getType())) {
+                        doc.setPinned(!newPinnedStatus);
+                        break;
+                    }
+                }
+                Log.e(TAG, "Toggle pin failed: " + t.getMessage(), t);
+                Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notifyItemChanged(position);
+            }
+        });
     }
 
     private void togglePin(String id) {
@@ -240,22 +419,29 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful())
-                {
+                if (response.isSuccessful()) {
                     Toast.makeText(context, "Đã xóa tài liệu", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(context, "Lỗi khi xóa tài liệu", Toast.LENGTH_SHORT).show();
+                } else {
+                    String errorMsg = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing deleteDocument errorBody", e);
+                        }
+                    }
+                    Log.e(TAG, "Delete document error: " + errorMsg);
+                    Toast.makeText(context, "Lỗi khi xóa tài liệu: " + errorMsg, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, "Delete document failed: " + t.getMessage(), t);
                 Toast.makeText(context, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     public void showPinnedDocuments() {
         showingPinned = true;
@@ -296,14 +482,14 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
 
     public static class ShareBottomSheet extends BottomSheetDialogFragment {
 
+        private String documentId;
         private String title;
-        private String type;
 
-        public static ShareBottomSheet newInstance(String title, String type) {
+        public static ShareBottomSheet newInstance(String documentId, String title) {
             ShareBottomSheet fragment = new ShareBottomSheet();
             Bundle args = new Bundle();
+            args.putString("documentId", documentId);
             args.putString("title", title);
-            args.putString("type", type);
             fragment.setArguments(args);
             return fragment;
         }
@@ -318,28 +504,31 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.Docume
             View view = inflater.inflate(R.layout.bottom_sheet_share, container, false);
 
             if (getArguments() != null) {
+                documentId = getArguments().getString("documentId");
                 title = getArguments().getString("title");
-                type = getArguments().getString("type");
             }
 
             TextView shareTitle = view.findViewById(R.id.shareTitle);
             TextView shareSubtitle = view.findViewById(R.id.shareSubtitle);
+            Button btnCreateLink = view.findViewById(R.id.btnCreateLink);
+            Button btnCancel = view.findViewById(R.id.btnCancel);
 
             shareTitle.setText("Chia sẻ tài liệu");
-            shareSubtitle.setText(title + " (" + type + ")");
+            shareSubtitle.setText(title);
 
-            view.findViewById(R.id.btnEmail).setOnClickListener(v -> shareVia("email"));
-            view.findViewById(R.id.btnSms).setOnClickListener(v -> shareVia("sms"));
-            view.findViewById(R.id.btnDrive).setOnClickListener(v -> shareVia("drive"));
-            view.findViewById(R.id.btnLink).setOnClickListener(v -> shareVia("link"));
-            view.findViewById(R.id.btnMore).setOnClickListener(v -> shareVia("more"));
+            btnCreateLink.setOnClickListener(v -> {
+                String shareUrl = "https://example.com/document/" + documentId;
+                ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Share Link", shareUrl);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "Liên kết đã được sao chép", Toast.LENGTH_SHORT).show();
+                dismiss();
+            });
+
+            btnCancel.setOnClickListener(v -> dismiss());
 
             return view;
         }
-
-        private void shareVia(String method) {
-            Toast.makeText(getContext(), "Chia sẻ qua: " + method, Toast.LENGTH_SHORT).show();
-            dismiss();
-        }
     }
+
 }

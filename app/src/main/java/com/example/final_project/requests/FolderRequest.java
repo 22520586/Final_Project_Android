@@ -1,25 +1,12 @@
-package com.example.final_project.models;
+package com.example.final_project.requests;
 
-import com.google.gson.annotations.SerializedName;
-
-public class Folder {
-    @SerializedName("_id")
-    private String id;
+public class FolderRequest {
     private String name;
     private String userId;
 
-    public Folder() {}
-
-    public Folder(String name) {
+    public FolderRequest(String name, String userId) {
         this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.userId = userId;
     }
 
     public String getName() {

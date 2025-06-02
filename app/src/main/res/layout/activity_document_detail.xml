@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#F8FAFC">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,11 +59,14 @@
         android:id="@+id/seekBarContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#0057B8"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:background="@android:color/white"
         android:elevation="4dp">
+
 
         <ImageButton
             android:id="@+id/seekBarLabel"
@@ -97,9 +100,8 @@
             android:layout_marginStart="8dp"
             android:minWidth="40dp"
             android:gravity="end" />
-
     </LinearLayout>
-
+  
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/aiButton"
         android:layout_width="wrap_content"
@@ -108,7 +110,7 @@
         android:layout_above="@id/seekBarContainer"
         android:layout_margin="16dp"
         android:src="@drawable/ic_ai"
-        app:backgroundTint="@color/blue_primary"
-        android:contentDescription="AI Assistant" />
-
+        app:backgroundTint="#0057B8"
+        android:contentDescription="Trợ lý AI"
+        app:tint="@android:color/white" />
 </RelativeLayout>
