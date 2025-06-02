@@ -12,7 +12,8 @@ public class RetrofitClient {
     private static DocumentApiServices documentApiServices;
     private static UserApiService userApiService;
     private static BotApiServices botApiServices;
-
+    private static ConfigApiServices configApiServices;
+    private static TagApiServices tagApiServices;
     private static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
             OkHttpClient client = new OkHttpClient.Builder()
@@ -46,6 +47,20 @@ public class RetrofitClient {
             botApiServices = getRetrofit(context).create(BotApiServices.class);
         }
         return botApiServices;
+    }
+
+    public static ConfigApiServices getConfigApiService(Context context) {
+        if (configApiServices == null) {
+            configApiServices = getRetrofit(context).create(ConfigApiServices.class);
+        }
+        return configApiServices;
+    }
+
+    public static TagApiServices getTagApiService(Context context) {
+        if (tagApiServices == null) {
+            tagApiServices = getRetrofit(context).create(TagApiServices.class);
+        }
+        return tagApiServices;
     }
 
 }

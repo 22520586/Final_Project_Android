@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     private int id;
     private String fullname;
     private String username;
@@ -34,6 +34,8 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     public String getToken() {return token;}
     public void setToken(String token) {this.token = token;}
 }

@@ -2,6 +2,7 @@ package com.example.final_project.networks;
 
 import com.example.final_project.models.Document;
 import com.example.final_project.requests.UpdateRequest;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -30,6 +31,9 @@ public interface DocumentApiServices {
 
     @GET("document/{id}")
     Call<Document> getDocumentById(@Path("id") int id);
+
+    @GET("document/extract/{id}")
+    Call<JsonObject> extractText(@Path("id") String documentId);
 
     @GET("document/get-pinned-docs")
     Call<List<Document>> getPinnedDocuments();

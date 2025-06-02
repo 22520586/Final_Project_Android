@@ -3,6 +3,7 @@ package com.example.final_project.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.final_project.MainActivity;
 import com.example.final_project.R;
+import com.example.final_project.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class SettingActivity extends AppCompatActivity {
@@ -20,7 +22,7 @@ public class SettingActivity extends AppCompatActivity {
     private ProgressBar storageProgressBar;
     private Switch switchNotification, switchAIAssistant, switchDataSaver;
     private BottomNavigationView bottomNavigationView;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences userPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +30,9 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
         // Khởi tạo SharedPreferences
-        sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE);
-
-        // Tham chiếu các view
+        userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String name = userPrefs.getString("name", "Khách");
+        String email = userPrefs.getString("email", "Không có email");
         tvUsername = findViewById(R.id.tvUsername);
         tvEmail = findViewById(R.id.tvEmail);
         tvStorage = findViewById(R.id.tvStorage);
@@ -40,6 +42,7 @@ public class SettingActivity extends AppCompatActivity {
 //        switchDataSaver = findViewById(R.id.switchDataSaver);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
+
         // Kiểm tra null
         if (tvUsername == null || tvEmail == null || tvStorage == null || storageProgressBar == null ||
                 switchNotification == null || bottomNavigationView == null) {
@@ -48,24 +51,23 @@ public class SettingActivity extends AppCompatActivity {
             return;
         }
 
-        // Khởi tạo dữ liệu
-        tvUsername.setText("Nguyễn Văn A");
-        tvEmail.setText("nguyenvana@email.com");
+        tvUsername.setText(name);
+        tvEmail.setText(email);
         tvStorage.setText("2.4GB / 5GB (48%)");
         storageProgressBar.setProgress(48);
 
         // Khôi phục trạng thái switch từ SharedPreferences
-        switchNotification.setChecked(sharedPreferences.getBoolean("notification_enabled", true));
+//        switchNotification.setChecked(sharedPreferences.getBoolean("notification_enabled", true));
 //        switchAIAssistant.setChecked(sharedPreferences.getBoolean("ai_assistant_enabled", true));
 //        switchDataSaver.setChecked(sharedPreferences.getBoolean("data_saver_enabled", false));
 
         // Xử lý sự kiện cho các switch
-        switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("notification_enabled", isChecked);
-            editor.apply();
-            Toast.makeText(this, "Thông báo: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
-        });
+//        switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putBoolean("notification_enabled", isChecked);
+//            editor.apply();
+//            Toast.makeText(this, "Thông báo: " + (isChecked ? "Bật" : "Tắt"), Toast.LENGTH_SHORT).show();
+//        });
 
 //        switchAIAssistant.setOnCheckedChangeListener((buttonView, isChecked) -> {
 //            SharedPreferences.Editor editor = sharedPreferences.edit();

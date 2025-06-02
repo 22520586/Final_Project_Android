@@ -4,9 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,20 +19,34 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.final_project.R;
+import com.example.final_project.models.TTSReponse;
 import com.example.final_project.networks.BotApiServices;
+import com.example.final_project.networks.ConfigApiServices;
 import com.example.final_project.networks.DocumentApiServices;
+import com.example.final_project.networks.FPTClient;
 import com.example.final_project.networks.RetrofitClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonObject;
 
-import java.net.URLEncoder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,11 +59,16 @@ public class DocumentDetailActivity extends AppCompatActivity {
     private static final String EXTRA_FILE_URL = "file_url";
     private static final String EXTRA_DOCUMENT_ID = "document_id";
 
-    private TextView documentTitleText;
-    private ImageButton backButton;
+    private TextView documentTitleText, progressText;
+    private ImageButton backButton, seekBarlabel;
+    private SeekBar seekBar;
     private FloatingActionButton aiButton;
+    private MediaPlayer mediaPlayer;
+    private Handler handler;
+    private boolean isPlay;
     private BotApiServices apiServices = RetrofitClient.getBotApiService(this);
-
+    private ConfigApiServices configApiServices = RetrofitClient.getConfigApiService(this);
+    private DocumentApiServices documentApiServices = RetrofitClient.getDocumentApiService(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +107,10 @@ public class DocumentDetailActivity extends AppCompatActivity {
         documentTitleText = findViewById(R.id.documentTitleText);
         backButton = findViewById(R.id.backButton);
         aiButton = findViewById(R.id.aiButton);
+        progressText = findViewById(R.id.progressText);
+        seekBar = findViewById(R.id.seekBar);
+        seekBarlabel = findViewById(R.id.seekBarLabel);
+        handler = new Handler();
     }
 
     private void setupButtonListeners() {
@@ -147,9 +173,8 @@ public class DocumentDetailActivity extends AppCompatActivity {
         searchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DocumentDetailActivity.this,
-                        "Đang mở tính năng tìm kiếm...", Toast.LENGTH_SHORT).show();
                 aiDialog.dismiss();
+                showSearchDialog();
                 // Add logic to handle content search
             }
         });
@@ -157,9 +182,8 @@ public class DocumentDetailActivity extends AppCompatActivity {
         textToSpeechLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(DocumentDetailActivity.this,
-                        "Tính năng này không khả dụng", Toast.LENGTH_SHORT).show();
-                // Do not dismiss dialog as feature is unavailable
+                extractText(getIntent().getStringExtra(EXTRA_DOCUMENT_ID));
+                aiDialog.dismiss();
             }
         });
 
@@ -174,6 +198,70 @@ public class DocumentDetailActivity extends AppCompatActivity {
         });
 
         aiDialog.show();
+    }
+
+    private void showSearchDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Tìm kiếm nội dung");
+        final View view = LayoutInflater.from(this).inflate(R.layout.dialog_search, null);
+        builder.setView(view);
+
+        builder.setPositiveButton("Tìm", (dialog, which) -> {
+            TextView input = view.findViewById(R.id.searchInput);
+            String query = input.getText().toString().trim();
+            if (!query.isEmpty()) {
+                performSemanticSearch(query);
+            }
+        });
+
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+
+        builder.show();
+    }
+
+    private void performSemanticSearch(String question)
+    {
+        String id = getIntent().getStringExtra(EXTRA_DOCUMENT_ID);
+        JsonObject questionObj = new JsonObject();
+        questionObj.addProperty("question", question);
+        Call<JsonObject> call = apiServices.semanticSearch(questionObj, id);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String matchedText = response.body().get("result").getAsString();
+                    Log.d("Text Match", matchedText);
+                    scrollToMatchedText(matchedText);
+                } else {
+                    Toast.makeText(DocumentDetailActivity.this, "Không tìm thấy kết quả phù hợp", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(DocumentDetailActivity.this, "Lỗi tìm kiếm: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void scrollToMatchedText(String text) {
+        WebView webView = findViewById(R.id.webView);
+        // Bước 1: Loại bỏ số dòng đầu mỗi đoạn, ví dụ "123. ", "1. "
+        String noLineNumbers = text.replaceAll("^\\d{1,4}\\.\\s*", "")       // cho dòng đầu
+                .replaceAll("\\n\\d{1,4}\\.\\s*", "\n");  // cho các dòng tiếp theo
+
+        // Bước 2: Escape để an toàn nhúng vào JavaScript
+        String safeText = noLineNumbers
+                .replace("\\", "\\\\")
+                .replace("'", "\\'")
+                .replace("\"", "\\\"")
+                .replace("\n", "")
+                .replace("\r", "")
+                .replace("\t", "");
+        String js = "javascript:if(window.find('" + safeText + "')){" +
+                "window.getSelection().anchorNode.parentNode.scrollIntoView();" +
+                "}";
+        Log.d("Js", js);
+        webView.evaluateJavascript(js, null);
     }
 
     private void summarizeText(String id) {
@@ -196,6 +284,157 @@ public class DocumentDetailActivity extends AppCompatActivity {
             }
         });
     }
+    private void extractText(String id) {
+        Call<JsonObject> call = documentApiServices.extractText(id);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String text = response.body().get("text").getAsString(); // sửa theo key bạn dùng
+                    if (!text.isEmpty()) {
+                        readText(text); // Gửi nội dung để xử lý TTS
+                    } else {
+                        Toast.makeText(DocumentDetailActivity.this, "Không có nội dung để đọc", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(DocumentDetailActivity.this, "Lỗi trích xuất văn bản", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(DocumentDetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void readText(String text) {
+        Call<JsonObject> call = configApiServices.getConfig();
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String key = response.body().get("fpt_api_key").getAsString();
+                    Log.d("Key", key);
+                    isPlay = true;
+                    getAIRead(text, key, isPlay); // Đưa text và apiKey vào convert
+                } else {
+                    Toast.makeText(DocumentDetailActivity.this, "Không lấy được API Key", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(DocumentDetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void getAIRead(String text, String apiKey, boolean initialPlayState) {
+        FPTClient.getClient().convertTextToSpeech(text, apiKey)
+                .enqueue(new Callback<TTSReponse>() {
+                    @Override
+                    public void onResponse(Call<TTSReponse> call, Response<TTSReponse> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                TTSReponse TTSmodel = response.body();
+                                mediaPlayer = new MediaPlayer();
+                                Log.d("API_RESPONSE", TTSmodel.getAsync());
+                                mediaPlayer.setDataSource(TTSmodel.getAsync());
+                                mediaPlayer.prepareAsync();
+
+                                mediaPlayer.setOnPreparedListener(mp -> {
+                                    seekBar.setMax(mp.getDuration());
+                                    progressText.setText(formatTime(mp.getDuration()));
+                                    mp.start();
+                                    isPlay = true; // Set initial state
+                                    seekBarlabel.setImageResource(R.drawable.btnpause); // Set initial icon
+                                    updateSeekBar();
+                                });
+
+                                mediaPlayer.setOnCompletionListener(mp -> {
+                                    seekBar.setProgress(0);
+                                    isPlay = false; // Reset state on completion
+                                    seekBarlabel.setImageResource(R.drawable.btnplay); // Update icon
+                                });
+
+                                // Single OnClickListener for play/pause toggle
+                                seekBarlabel.setOnClickListener(v -> {
+                                    if (mediaPlayer != null) {
+                                        if (isPlay) {
+                                            mediaPlayer.pause();
+                                            isPlay = false;
+                                            seekBarlabel.setImageResource(R.drawable.btnplay);
+                                        } else {
+                                            mediaPlayer.start();
+                                            isPlay = true;
+                                            seekBarlabel.setImageResource(R.drawable.btnpause);
+                                            updateSeekBar(); // Resume updating SeekBar
+                                        }
+                                    }
+                                });
+
+                                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                    @Override
+                                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                        if (fromUser && mediaPlayer != null) {
+                                            mediaPlayer.seekTo(progress);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onStartTrackingTouch(SeekBar seekBar) {}
+                                    @Override
+                                    public void onStopTrackingTouch(SeekBar seekBar) {}
+                                });
+
+                            } catch (Exception e) {
+                                Log.d("MEDIA_PLAYER_ERROR", e.getMessage());
+                                Toast.makeText(DocumentDetailActivity.this, "Không thể phát âm thanh", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Log.d("TTS", response.message());
+                            Toast.makeText(DocumentDetailActivity.this, "Lỗi khi chuyển văn bản thành giọng nói " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TTSReponse> call, Throwable t) {
+                        Toast.makeText(DocumentDetailActivity.this, "Lỗi kết nối với FPT.AI", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void updateSeekBar() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+            progressText.setText(formatTime(mediaPlayer.getCurrentPosition()));
+            handler.postDelayed(this::updateSeekBar, 1000);
+        }
+    }
+
+    private String formatTime(int millis) {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+    }
+
+
+    public void playAudioFromUrl(String audioUrl) {
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(audioUrl);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setOnPreparedListener(MediaPlayer::start);
+            mediaPlayer.prepareAsync(); // Asynchronous để không block UI
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Không thể phát âm thanh", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void showSummaryDialog(String summary) {
         new AlertDialog.Builder(this)
