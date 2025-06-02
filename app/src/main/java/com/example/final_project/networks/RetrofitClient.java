@@ -56,6 +56,7 @@ public class RetrofitClient {
             folderApiServices = getRetrofit(context).create(FolderApiServices.class);
         }
         return folderApiServices;
+    }
 
     public static ConfigApiServices getConfigApiService(Context context) {
         if (configApiServices == null) {

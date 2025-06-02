@@ -150,7 +150,7 @@ public class DocumentDetailActivity extends AppCompatActivity {
         View summarizeLayout = aiDialog.findViewById(R.id.layout_summarize);
         View textToSpeechLayout = aiDialog.findViewById(R.id.layout_text_to_speech);
         View questionsLayout = aiDialog.findViewById(R.id.layout_questions);
-
+        View searchLayout = aiDialog.findViewById(R.id.layout_search);
         // Set close button click listener
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
