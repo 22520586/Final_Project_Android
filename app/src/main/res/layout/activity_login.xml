@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
-    android:background="#F8FAFC">
+    android:background="#F5F5F5">
 
     <!-- Tiêu đề -->
     <TextView
@@ -25,6 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:errorEnabled="true"
+        app:boxStrokeColor="#B0BEC5"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:boxBackgroundColor="#FFFFFF"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -45,6 +49,10 @@
         android:layout_marginTop="16dp"
         app:endIconMode="password_toggle"
         app:errorEnabled="true"
+        app:boxStrokeColor="#B0BEC5"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:boxBackgroundColor="#FFFFFF"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -58,23 +66,15 @@
             android:textColorHint="#757575" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Remember Me Checkbox and Forgot Password -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Remember Me Checkbox -->
+    <CheckBox
+        android:id="@+id/rememberMeCheckBox"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="12dp"
-        android:gravity="center_vertical">
-
-        <CheckBox
-            android:id="@+id/rememberMeCheckBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ghi nhớ đăng nhập"
-            android:textColor="#333333"
-            android:padding="5dp" />
-    </LinearLayout>
+        android:text="Ghi nhớ đăng nhập"
+        android:textColor="#333333"
+        android:padding="5dp" />
 
     <!-- Login Button -->
     <com.google.android.material.button.MaterialButton

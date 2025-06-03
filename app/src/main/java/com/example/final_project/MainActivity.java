@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -338,8 +340,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showUploadMetadataDialog(Uri fileUri)
-    {
+    private void showUploadMetadataDialog(Uri fileUri) {
         // Inflate custom layout
         LayoutInflater inflater = LayoutInflater.from(this);
         View dialogView = inflater.inflate(R.layout.activity_input_document_data, null);
@@ -347,22 +348,29 @@ public class MainActivity extends AppCompatActivity {
         EditText editFileName = dialogView.findViewById(R.id.editFileName);
         EditText editTags = dialogView.findViewById(R.id.editTags);
 
-        // Tạo dialog
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Nhập thông tin tài liệu")
-                .setView(dialogView)
-                .setPositiveButton("Upload", (dialogInterface, i) -> {
-                    String title = editFileName.getText().toString().trim();
-                    String tags = editTags.getText().toString().trim();
-                    if (!title.isEmpty()) {
-                        uploadFile(fileUri, title, tags);
-                    } else {
-                        Toast.makeText(this, "Tên tài liệu không được để trống", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Hủy", null)
-                .create();
+        // Tạo dialog với background trắng
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Nhập thông tin tài liệu");
 
+        // Tạo drawable cho background trắng
+        GradientDrawable dialogBackground = new GradientDrawable();
+        dialogBackground.setColor(Color.parseColor("#FFFFFF"));
+        dialogBackground.setCornerRadius(8); // Bo góc nhẹ để đẹp hơn
+
+        builder.setView(dialogView);
+        builder.setPositiveButton("Upload", (dialogInterface, i) -> {
+            String title = editFileName.getText().toString().trim();
+            String tags = editTags.getText().toString().trim();
+            if (!title.isEmpty()) {
+                uploadFile(fileUri, title, tags);
+            } else {
+                Toast.makeText(this, "Tên tài liệu không được để trống", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Hủy", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(dialogBackground); // Đặt background trắng
         dialog.show();
     }
 

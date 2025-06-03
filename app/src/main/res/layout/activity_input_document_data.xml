@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#F8FAFC">
+    android:background="#FFFFFF">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fileNameInputLayout"
@@ -14,6 +14,9 @@
         android:layout_marginBottom="16dp"
         app:hintTextColor="#757575"
         app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#B0BEC5"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -33,6 +36,9 @@
         android:layout_height="wrap_content"
         app:hintTextColor="#757575"
         app:boxBackgroundColor="#FFFFFF"
+        app:boxStrokeColor="#B0BEC5"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText

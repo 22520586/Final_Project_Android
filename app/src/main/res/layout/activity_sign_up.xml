@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
+    android:background="#F5F5F5"
     android:fillViewport="true">
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Đăng Ký"
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="#0057B8"
             android:fontFamily="sans-serif-medium"
@@ -30,9 +30,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -51,9 +54,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -72,9 +78,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -93,9 +102,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -114,10 +126,13 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -136,10 +151,13 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:maxWidth="500dp"
+            android:layout_marginTop="16dp"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
+            app:boxStrokeColor="#B0BEC5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#FFFFFF"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -154,12 +172,11 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Nút Đăng Ký -->
+        <!-- Sign Up Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:maxWidth="500dp"
             android:text="Đăng Ký"
             android:textSize="16sp"
             android:textColor="#FFFFFF"
@@ -168,7 +185,7 @@
             app:backgroundTint="#0057B8"
             android:elevation="4dp" />
 
-        <!-- Liên kết Đăng Nhập -->
+        <!-- Login Link -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
