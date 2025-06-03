@@ -58,7 +58,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputNewTag"
                     android:layout_width="match_parent"
-                    android:layout_height="38dp"
+                    android:layout_height="58dp"
                     android:fontFamily="sans-serif"
                     android:hint="Nhập tag mới..."
                     android:inputType="text"
