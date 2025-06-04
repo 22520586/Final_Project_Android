@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -27,4 +28,6 @@ public interface FolderApiServices {
 
     @DELETE("folder/{id}")
     Call<ApiResponse<DeleteResult>> deleteFolder(@Path("id") String id);
+    @PATCH("folder/{id}")
+    Call<ApiResponse<Folder>> renameFolder(@Path("id") String folderId, @Body FolderRequest folderRequest);
 }

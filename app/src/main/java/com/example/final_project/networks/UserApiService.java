@@ -5,6 +5,7 @@ import com.example.final_project.models.User;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 
 public interface UserApiService {
@@ -16,5 +17,8 @@ public interface UserApiService {
 
     @POST("auth/logout")
     Call<Void> logout();
+
+    @PATCH("user/update")
+    Call<User> updateUser(@Body User user);
 
 }

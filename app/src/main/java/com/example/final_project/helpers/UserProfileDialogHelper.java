@@ -1,6 +1,5 @@
 package com.example.final_project.helpers;
 
-
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Dialog;
@@ -9,27 +8,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.final_project.MainActivity;
 import com.example.final_project.R;
-
-import com.example.final_project.models.User;
 import com.example.final_project.activity.LoginActivity;
+import com.example.final_project.models.User;
 import com.example.final_project.networks.RetrofitClient;
 import com.example.final_project.networks.UserApiService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 
 public class UserProfileDialogHelper {
 
@@ -39,17 +36,25 @@ public class UserProfileDialogHelper {
     private Dialog changePasswordDialog;
     private Dialog logoutConfirmationDialog;
 
-    // User data - in a real app, this would come from a database or shared preferences
-    private String fullName = "Nguyễn Văn A";
-    private String gender = "Nam";
-    private String phone = "0912345678";
-    private String email = "nguyenvana@email.com";
-    private String username = "nguyenvana";
+    // User data
+    private String fullName;
+    private String gender;
+    private String phone;
+    private String email;
+    private String username;
     private User user;
 
     public UserProfileDialogHelper(MainActivity activity, User user) {
         this.activity = activity;
         this.user = user;
+        // Initialize user data from User object
+        if (user != null) {
+            this.fullName = user.getName();
+            this.phone = user.getPhone();
+            this.email = user.getEmail();
+            this.username = user.getUsername();
+            this.gender = "Nam"; // Default value, as gender is not in User model
+        }
     }
 
     public void showUserProfileDialog() {
@@ -121,9 +126,6 @@ public class UserProfileDialogHelper {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Select the current gender
-        int position = adapter.getPosition(gender);
-
         // Set current data
         etFullName.setText(fullName);
         etPhone.setText(phone);
@@ -142,15 +144,66 @@ public class UserProfileDialogHelper {
         btnSaveProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Save the changes
-                fullName = etFullName.getText().toString();
-                phone = etPhone.getText().toString();
-                email = etEmail.getText().toString();
-                username = etUsername.getText().toString();
+                // Get input data
+                final String inputFullName = etFullName.getText().toString().trim();
+                final String inputPhone = etPhone.getText().toString().trim();
+                final String inputEmail = etEmail.getText().toString().trim();
+                final String inputUsername = etUsername.getText().toString().trim();
 
-                activity.showToast("Cập nhật thông tin thành công");
-                editProfileDialog.dismiss();
-                showUserProfileDialog();
+                // Use existing values if inputs are empty
+                String finalFullName = inputFullName.isEmpty() ? user.getName() : inputFullName;
+                String finalPhone = inputPhone.isEmpty() ? user.getPhone() : inputPhone;
+                String finalEmail = inputEmail.isEmpty() ? user.getEmail() : inputEmail;
+                String finalUsername = inputUsername.isEmpty() ? user.getUsername() : inputUsername;
+
+                // Log payload
+                Log.d("UpdateUser", "Sending payload: fullname=" + finalFullName + ", username=" + finalUsername + ", email=" + finalEmail + ", phone=" + finalPhone);
+
+                // Create User object for API call
+                User updatedUser = new User(finalFullName, finalUsername, finalEmail, null, finalPhone); // Loại bỏ password
+
+                // Call API to update user
+                UserApiService userApiService = RetrofitClient.getUserApiService(activity);
+                Call<User> call = userApiService.updateUser(updatedUser);
+                call.enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            // Update local data
+                            fullName = finalFullName;
+                            phone = finalPhone;
+                            email = finalEmail;
+                            username = finalUsername;
+                            user.setName(finalFullName);
+                            user.setPhone(finalPhone);
+                            user.setEmail(finalEmail);
+                            user.setUsername(finalUsername);
+
+                            activity.showToast("Cập nhật thông tin thành công");
+                            editProfileDialog.dismiss();
+                            showUserProfileDialog();
+                        } else {
+                            String errorMessage = "Cập nhật thông tin thất bại. Mã lỗi: " + response.code();
+                            try {
+                                errorMessage += "\nChi tiết: " + response.errorBody().string();
+                            } catch (Exception e) {
+                                errorMessage += "\nKhông thể đọc chi tiết lỗi: " + e.getMessage();
+                            }
+                            activity.showToast(errorMessage);
+                            Log.e("UpdateUser", errorMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        String errorMessage = "Lỗi kết nối: " + t.getMessage();
+                        if (t.getMessage() != null && t.getMessage().contains("Unauthorized - Redirecting to Login")) {
+                            errorMessage = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+                        }
+                        activity.showToast(errorMessage);
+                        Log.e("UpdateUser", errorMessage, t);
+                    }
+                });
             }
         });
 
@@ -264,13 +317,25 @@ public class UserProfileDialogHelper {
                             activity.startActivity(intent);
                             activity.finish();
                         } else {
-                            activity.showToast("Đăng xuất thất bại. Vui lòng thử lại.");
+                            String errorMessage = "Đăng xuất thất bại. Mã lỗi: " + response.code();
+                            try {
+                                errorMessage += "\nChi tiết: " + response.errorBody().string();
+                            } catch (Exception e) {
+                                errorMessage += "\nKhông thể đọc chi tiết lỗi: " + e.getMessage();
+                            }
+                            activity.showToast(errorMessage);
+                            Log.e("LogoutUser", errorMessage);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        activity.showToast("Lỗi kết nối: " + t.getMessage());
+                        String errorMessage = "Lỗi kết nối: " + t.getMessage();
+                        if (t.getMessage() != null && t.getMessage().contains("Unauthorized - Redirecting to Login")) {
+                            errorMessage = "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+                        }
+                        activity.showToast(errorMessage);
+                        Log.e("LogoutUser", errorMessage, t);
                     }
                 });
             }
@@ -280,8 +345,9 @@ public class UserProfileDialogHelper {
     }
 
     private void clearUserSession() {
-        SharedPreferences prefs = activity.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences("SmartToken", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.clear().apply(); // Clear all stored user data
+        editor.remove("token"); // Xóa token
+        editor.apply(); // Sử dụng apply() thay vì clear() để chỉ xóa token
     }
 }

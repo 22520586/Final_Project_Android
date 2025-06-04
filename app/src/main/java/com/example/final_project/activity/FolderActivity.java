@@ -132,7 +132,11 @@ public class FolderActivity extends AppCompatActivity {
 
             @Override
             public void onRenameFolder(Folder folder, String newName) {
-                showToast("Chức năng đổi tên thư mục chưa được hỗ trợ");
+                if (folder != null && folder.getId() != null) {
+                    renameFolderOnServer(folder, newName);
+                } else {
+                    showToast("Dữ liệu thư mục không hợp lệ");
+                }
             }
 
             @Override
@@ -180,7 +184,7 @@ public class FolderActivity extends AppCompatActivity {
                     }
                     showToast(errorMsg);
                     Log.e("API", "getFoldersByUserId Error: " + response.code() + ", URL: " + call.request().url());
-                    folderList.clear(); // Clear list on error to avoid stale data
+                    folderList.clear();
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -189,8 +193,49 @@ public class FolderActivity extends AppCompatActivity {
             public void onFailure(Call<ApiResponse<List<Folder>>> call, Throwable t) {
                 showToast("Lỗi kết nối: " + t.getMessage());
                 Log.e("API", "getFoldersByUserId Failure: " + t.getMessage() + ", URL: " + call.request().url());
-                folderList.clear(); // Clear list on failure
+                folderList.clear();
                 adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void renameFolderOnServer(Folder folder, String newName) {
+        Log.d("API", "Attempting to rename folder: ID=" + folder.getId() + ", New Name=" + newName);
+        FolderRequest request = new FolderRequest(newName, userId);
+        folderApiServices.renameFolder(folder.getId(), request).enqueue(new Callback<ApiResponse<Folder>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Folder>> call, Response<ApiResponse<Folder>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMetadata() != null) {
+                    Folder updatedFolder = response.body().getMetadata();
+                    Log.d("API", "Folder renamed successfully: ID=" + updatedFolder.getId() + ", New Name=" + updatedFolder.getName());
+                    showToast("Đã đổi tên thư mục thành: " + updatedFolder.getName());
+                    // Update folder in local list immediately
+                    for (int i = 0; i < folderList.size(); i++) {
+                        if (folderList.get(i).getId().equals(updatedFolder.getId())) {
+                            folderList.get(i).setName(updatedFolder.getName());
+                            adapter.notifyItemChanged(i);
+                            break;
+                        }
+                    }
+                    fetchFolders(); // Sync with backend
+                } else {
+                    String errorMsg = "Lỗi khi đổi tên thư mục";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = "Lỗi: " + response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e("API", "Error parsing error body: " + e.getMessage());
+                        }
+                    }
+                    showToast(errorMsg);
+                    Log.e("API", "renameFolder Error: " + response.code() + ", URL: " + call.request().url());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Folder>> call, Throwable t) {
+                showToast("Lỗi kết nối: " + t.getMessage());
+                Log.e("API", "renameFolder Failure: " + t.getMessage() + ", URL: " + call.request().url());
             }
         });
     }
